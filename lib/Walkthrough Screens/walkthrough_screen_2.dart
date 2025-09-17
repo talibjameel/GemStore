@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../Auth/UI/login_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../Helper Funcation/cutom_button.dart';
 
-class WalkthroughScreen extends StatefulWidget {
-  const WalkthroughScreen({super.key});
+class WalkthroughScreen2 extends StatefulWidget {
+  const WalkthroughScreen2({super.key});
 
   @override
-  State<WalkthroughScreen> createState() => _WalkthroughScreenState();
+  State<WalkthroughScreen2> createState() => _WalkthroughScreen2State();
 }
-class _WalkthroughScreenState extends State<WalkthroughScreen> {
+class _WalkthroughScreen2State extends State<WalkthroughScreen2> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -30,6 +30,13 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
     "Trendy outfits crafted for comfort",
     "Fast delivery at your doorstep",
   ];
+
+  Future<void> completeWalkthrough() async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'walkthroughSeen', value: 'true');
+    Navigator.pushReplacementNamed(context, '/MiddleWare');
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +156,7 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
                         backgroundColor: Color(0xFF747375),
                         borderRadius: 25,
                         onPressed: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                          completeWalkthrough();
                         },
                       ),
                     ),

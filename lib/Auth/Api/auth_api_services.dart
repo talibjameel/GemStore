@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ApiConfig {
@@ -16,6 +17,11 @@ class ApiConfig {
 
 
 class ApiService {
+
+  // 🔹 Secure Storage
+  final storage = const FlutterSecureStorage();
+
+
   // 🔹 Signup
   Future<Map<String, dynamic>> signUp(String name, String email, String password, String confirmPassword) async {
     try {
@@ -33,7 +39,15 @@ class ApiService {
       debugPrint(ApiConfig.signUp);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        final jwtToken = data["jwt_token"];
+        await storage.write(key: "jwt_token", value: jwtToken);
+
+        return {
+          "message": data["message"],
+          "jwt_token": data["jwt_token"],
+          "user": data["user"],
+        };
       } else {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData["message"] ?? "Signup failed");
@@ -56,8 +70,19 @@ class ApiService {
       );
 
       debugPrint(ApiConfig.login);
+
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+
+        final jwtToken = data["jwt_token"];
+        await storage.write(key: "jwt_token", value: jwtToken);
+        debugPrint(jwtToken);
+
+        return {
+          "message": data["message"],
+          "jwt_token": data["jwt_token"],
+          "user": data["user"],
+        };
       } else {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData["message"] ?? "Login failed");
@@ -82,6 +107,7 @@ class ApiService {
 
       if (response.statusCode == 200 ) {
         return jsonDecode(response.body);
+
       } else {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData["message"] ?? "Forgot password failed");

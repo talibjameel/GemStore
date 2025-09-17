@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: Alignment.topRight,
               child: GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPassword()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
                 },
                 child: TextWidget(
                   text: 'Forgot Password?',
