@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../Helper Funcation/cutom_button.dart';
 
-class OtpVerficationScreen extends StatefulWidget {
-  const OtpVerficationScreen({super.key});
+class OtpVerificationScreen extends StatefulWidget {
+  const OtpVerificationScreen({super.key});
 
   @override
-  State<OtpVerficationScreen> createState() => _OtpVerficationScreenState();
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
-class _OtpVerficationScreenState extends State<OtpVerficationScreen> {
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   ApiService apiService = ApiService();
   final List<TextEditingController> _controllers =
   List.generate(4, (index) => TextEditingController());
@@ -26,7 +26,7 @@ class _OtpVerficationScreenState extends State<OtpVerficationScreen> {
       final response = await apiService.otpVerification(email, otp);
       debugPrint("OTP Verification Success: $response");
       debugPrint("User Email: $email \n OTP: $otp");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UpdatePassword()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UpdatePasswordScreen()));
     }catch(e){
       throw Exception("Error: $e");
     }

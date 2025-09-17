@@ -3,16 +3,15 @@ import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../Helper Funcation/cutom_button.dart';
-import 'opt_verification.dart';
 
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   ApiService apiService = ApiService();
   TextEditingController emailController = TextEditingController();
   FlutterSecureStorage storage = FlutterSecureStorage();
@@ -21,14 +20,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
 
   Future<void> forgotPassword() async{
+
     final email = emailController.text;
     try{
       final response = await apiService.forgotPassword(email);
       storage.write(key: 'UserEmail', value: emailController.text);
       debugPrint("Forgot Password Success: $response");
       debugPrint("User Email: $email");
-
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpVerficationScreen()));
+      Navigator.pushReplacementNamed(context, '/OtpVerificationScreen');
     }catch(e){
       throw Exception("Error: $e");
     }

@@ -6,13 +6,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../Helper Funcation/cutom_button.dart';
 
-class UpdatePassword extends StatefulWidget {
-  const UpdatePassword({super.key});
+class UpdatePasswordScreen extends StatefulWidget {
+  const UpdatePasswordScreen({super.key});
 
   @override
-  State<UpdatePassword> createState() => _UpdatePasswordState();
+  State<UpdatePasswordScreen> createState() => _UpdatePasswordScreenState();
 }
-class _UpdatePasswordState extends State<UpdatePassword> {
+class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   ApiService apiService = ApiService();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();

@@ -1,9 +1,10 @@
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:ecommerce_store/Helper%20Funcation/cutom_button.dart';
 import 'package:ecommerce_store/Notification/notification_ui.dart';
-import 'package:ecommerce_store/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 
 /// 🔹  Bottom navigationBar
 class HomePage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     const Center(child: Text("Notifications Screen", style: TextStyle(fontSize: 20))),
     const Profile(),
     ];
-
+ /// 🔹Bottom navigationBar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -418,6 +419,8 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 class _ProfileState extends State<Profile> {
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -427,8 +430,14 @@ class _ProfileState extends State<Profile> {
             height: 51,
             backgroundColor: Color(0xFF2D201C),
             borderRadius: 25,
-            onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SplashScreen()));
+            onPressed: () async {
+              // clear flutter secure storage
+              await storage.delete(key: 'jwt_token');
+
+              // navigate to splash screen
+              if(context.mounted){
+                Navigator.pushReplacementNamed(context, '/MiddleWare');
+              }
             },),
     );
   }
