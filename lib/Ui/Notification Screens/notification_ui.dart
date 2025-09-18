@@ -56,7 +56,7 @@ class _NotificationUiState extends State<NotificationUi> {
             ),
           ),
         ),
-        title: const TextWidget(text: "Notification"),
+        title: const TextWidget(text: "Notification Screens"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

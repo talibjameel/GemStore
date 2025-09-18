@@ -1,37 +1,41 @@
-import 'package:ecommerce_store/Auth/UI/sign_up.dart';
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
-import 'package:ecommerce_store/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../Helper Funcation/cutom_button.dart';
-import '../Api/auth_api_services.dart';
-import 'forgot_password.dart';
+import '../../APIs/Auth Api/auth_api_services.dart';
 
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
+  final apiService = ApiService();
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  ApiService apiService = ApiService();
+  TextEditingController confirmPasswordController = TextEditingController();
 
-  Future<void> login() async{
+  Future<void> signUp() async {
+    final name = nameController.text;
     final email = emailController.text;
     final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
 
-    try{
-      final response = await apiService.login(email, password);
-      debugPrint("Login Success: $response");
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-    }catch(e){
-      debugPrint("Login Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+    try {
+      final response = await apiService.signUp(name, email, password, confirmPassword);
+      debugPrint("Signup Success: $response");
+      if(mounted){
+        Navigator.pushReplacementNamed(context, '/MainNavigation');
+      }
+    } catch (e) {
+      debugPrint("Signup Error: $e");
+      if(mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
     }
   }
 
@@ -45,50 +49,57 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 100,),
+            SizedBox(height: 50,),
             TextWidget(
-               text:  'Login into\nyour Account',
+              text:  'Create \nyour Account',
               fontSize: 25,
               fontWeight: FontWeight.normal,
               color: Colors.black,
             ),
-            SizedBox(height: 45,),
+            SizedBox(height: 20,),
             TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                hintText: 'Email Address',
-                hintStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                ),
-              )
+              controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Enter Your Name',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
+                )
             ),
             SizedBox(height: 20,),
             TextField(
+              controller: emailController,
+                decoration: InputDecoration(
+                  hintText: 'Email Address',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
+                )
+            ),
+
+            SizedBox(height: 20,),
+            TextField(
               controller: passwordController,
-              decoration: InputDecoration(
-                hintText: 'Password',
-                hintStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                ),
-              )
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
+                )
             ),
             SizedBox(height: 30,),
-            Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
-                },
-                child: TextWidget(
-                  text: 'Forgot Password?',
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black,
-                ),
-              ),
-
+            TextField(
+              controller: confirmPasswordController,
+                decoration: InputDecoration(
+                  hintText: 'Confirm Password',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
+                )
             ),
             SizedBox(height: 30,),
             Align(
@@ -96,18 +107,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   CustomButton(
-                    text: "Login",
+                    text: "SignUp",
                     width: 147,
                     height: 51,
                     backgroundColor: Color(0xFF2D201C),
                     borderRadius: 25,
                     onPressed: () {
-                      login();
+                      signUp();
                     },
                   ),
                   SizedBox(height: 15,),
                   TextWidget(
-                    text: 'Or login with',
+                    text: 'Or sign up with',
                     fontSize: 10,
                     fontWeight: FontWeight.normal,
                     color: Colors.black,
@@ -117,12 +128,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 10,
                     children: [
-                      SvgPicture.asset('res/Auth Button/Frame 12.svg'),
-                      SvgPicture.asset('res/Auth Button/Frame 13.svg'),
-                      SvgPicture.asset('res/Auth Button/Frame 14.svg'),
+                      SvgPicture.asset('res/Auth Screens Button/Frame 12.svg'),
+                      SvgPicture.asset('res/Auth Screens Button/Frame 13.svg'),
+                      SvgPicture.asset('res/Auth Screens Button/Frame 14.svg'),
                     ],
                   ),
-                  SizedBox(height: 150,),
+                  SizedBox(height: 100,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -134,10 +145,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                           onPressed: (){
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+                            Navigator.pushNamed(context, '/LoginScreen');
                           },
                           child: TextWidget(
-                            text: 'Sign Up',
+                            text: 'Log in',
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
                             color: Color(0xFF2D201C),

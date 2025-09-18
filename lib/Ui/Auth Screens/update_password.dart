@@ -1,6 +1,5 @@
-import 'package:ecommerce_store/Auth/Api/auth_api_services.dart';
+import 'package:ecommerce_store/APIs/Auth%20Api/auth_api_services.dart';
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
-import 'package:ecommerce_store/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -25,7 +24,9 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
     try{
       final response = await apiService.updatePassword(email, newPassword);
       debugPrint("Update Password Success: $response");
-      showPasswordChangedBottomSheet(context);
+      if(mounted){
+        showPasswordChangedBottomSheet(context);
+      }
     }catch(e){
       throw Exception("Error: $e");
     }
@@ -192,7 +193,7 @@ void showPasswordChangedBottomSheet(BuildContext context) {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+                  Navigator.pushReplacementNamed(context, '/MainNavigation');
                 },
                 child: const Text(
                   "Browse home",
