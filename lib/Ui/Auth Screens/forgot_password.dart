@@ -1,7 +1,8 @@
-import 'package:ecommerce_store/Auth/Api/auth_api_services.dart';
+import 'package:ecommerce_store/APIs/Auth%20Api/auth_api_services.dart';
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import '../../Helper Funcation/cutom_button.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {

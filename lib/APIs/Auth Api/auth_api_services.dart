@@ -2,19 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-
-class ApiConfig {
-  // Base URL
-  static const String baseUrl = "http://localhost:3000";
-
-  // Endpoints
-  static const String login = "$baseUrl/login";
-  static const String signUp = "$baseUrl/signup";
-  static const String forgotPassword = "$baseUrl/forgot-password";
-  static const String otpVerification = "$baseUrl/verify-otp";
-  static const String updatePassword = "$baseUrl/update-password";
-}
-
+import '../Api Configuration Class/api_configuration.dart';
 
 class ApiService {
 
