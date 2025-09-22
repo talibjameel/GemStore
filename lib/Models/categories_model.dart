@@ -32,6 +32,7 @@ class CategoryModel {
   final int? parentId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? icon;
 
   CategoryModel({
     this.id,
@@ -40,6 +41,7 @@ class CategoryModel {
     this.parentId,
     this.createdAt,
     this.updatedAt,
+    this.icon,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class CategoryModel {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : null,
+      icon: json['icon_url'] as String?,
     );
   }
 
@@ -65,6 +68,7 @@ class CategoryModel {
       "parent_id": parentId,
       "created_at": createdAt?.toIso8601String(),
       "updated_at": updatedAt?.toIso8601String(),
+      "icon_url": icon,
     };
   }
 }

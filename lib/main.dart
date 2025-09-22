@@ -6,6 +6,7 @@ import 'Ui/Auth Screens/middle_ware.dart';
 import 'Ui/Auth Screens/opt_verification.dart';
 import 'Ui/Auth Screens/sign_up.dart';
 import 'Ui/Auth Screens/update_password.dart';
+import 'Ui/Main Navigation/profile.dart';
 import 'Ui/Notification Screens/notification_ui.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_1.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_2.dart';

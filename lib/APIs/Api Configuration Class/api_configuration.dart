@@ -9,6 +9,6 @@ class ApiConfig {
   static const String otpVerification = "$baseUrl/verify-otp";
   static const String updatePassword = "$baseUrl/update-password";
   static const String categories = "$baseUrl/categories";
-  static const String categoriesProducts = "$baseUrl/categories/:id";
+  static const String categoriesProducts = "$baseUrl/products/category/:id";
 
 }
