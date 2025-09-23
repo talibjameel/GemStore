@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../Providers/category_provider.dart';
-import '../../Providers/products_provider_by_id.dart';
 import '../../Models/product_model.dart';
+import '../../Providers/category_provider.dart';
+
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -72,7 +72,7 @@ class _HomeState extends ConsumerState<Home> {
                         });
                         ref
                             .read(selectedCategoryIdProvider.notifier)
-                            .state = categories[index].id!;
+                            .state = cat.id!;
                       },
                       child: Column(
                         children: [
@@ -146,32 +146,97 @@ class _HomeState extends ConsumerState<Home> {
           /// 🔹 Products List
           Expanded(
             child: ref.watch(productProvider(selectedCategoryId)).when(
-              data: (products) {
-                if (products.isEmpty) {
+              data: (response) {
+                final products = response.products ?? [];
+                final banners = response.banners ?? [];
+
+                if (products.isEmpty && banners.isEmpty) {
                   return const Center(child: Text("No products"));
                 }
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 8),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final ProductModel product = products[index];
-                    return Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      child: ListTile(
-                        title: Text(product.name ?? ''),
-                        subtitle: Text("Rs. ${product.price ?? '-'}"),
-                        trailing: product.stock != null
-                            ? Text("Stock: ${product.stock}")
-                            : null,
+
+                // ✅ Split products by flags
+                final featureProducts =
+                products.where((p) => p.isFeatured == true).toList();
+                final recommendedProducts =
+                products.where((p) => p.isRecommended == true).toList();
+                final topCollectionProducts =
+                products.where((p) => p.topCollection == true).toList();
+
+                // ✅ Split banners by position
+                final topBanner =
+                banners.where((b) => b.position?.toLowerCase() == "top").toList();
+                final middleBanner =
+                banners.where((b) => b.position?.toLowerCase() == "middle").toList();
+                final bottomBanner =
+                banners.where((b) => b.position?.toLowerCase() == "bottom").toList();
+
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  children: [
+                    /// 🔹 Top Banner
+                    if (topBanner.isNotEmpty) _buildBanner(topBanner.first),
+
+                    /// 🔹 Feature Products
+                    if (featureProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Feature Products"),
+                      _buildProductGrid(featureProducts),
+                    ],
+
+                    /// 🔹 Middle Banner
+                    if (middleBanner.isNotEmpty) _buildBanner(middleBanner.first),
+
+                    /// 🔹 Recommended Products
+                    if (recommendedProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Recommended"),
+                      _buildProductList(recommendedProducts),
+                    ],
+
+                    /// 🔹 Top Collection Products
+                    if (topCollectionProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Top Collection"),
+                      _buildProductGrid(topCollectionProducts),
+                    ],
+
+                    SizedBox(height: 20),
+
+                    /// 🔹 Bottom Banners Horizontal
+                    if (bottomBanner.isNotEmpty)
+                      SizedBox(
+                        height: 150,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: bottomBanner.length,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemBuilder: (context, index) {
+                            final banner = bottomBanner[index];
+                            // har banner ke andar multiple images hain, iterate karo
+                            return Row(
+                              children: banner.bannerImg!.map((imgUrl) {
+                                return Container(
+                                  width: 150,
+                                  height: 350,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Image.network(
+                                      imgUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
                       ),
-                    );
-                  },
+
+                  ],
                 );
               },
-              loading: () =>
-              const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (err, stack) => Center(child: Text("Error: $err")),
             ),
           ),
@@ -186,4 +251,178 @@ class _HomeState extends ConsumerState<Home> {
       child: const Center(child: Text("Drawer Placeholder")),
     );
   }
+
+  /// 🔹 Banner Widget
+  Widget _buildBanner(BannerModel banner) {
+    return SizedBox(
+      height: 180,
+      child: PageView.builder(
+        itemCount: banner.bannerImg?.length ?? 0,
+        controller: PageController(viewportFraction: 0.9),
+        itemBuilder: (context, index) {
+          final imgUrl = banner.bannerImg![index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  imgUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.network(
+                    "https://via.placeholder.com/300x150",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                if (banner.title != null || banner.description != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.5),
+                          Colors.transparent
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (banner.title != null)
+                          Text(
+                            banner.title!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        if (banner.description != null)
+                          Text(
+                            banner.description!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// 🔹 Section Title Widget
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            "Show all",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔹 Product Grid
+  Widget _buildProductGrid(List<ProductModel> products) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: products.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.75,
+      ),
+      itemBuilder: (context, index) {
+        final product = products[index];
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            image: DecorationImage(
+              image: NetworkImage(
+                product.productImg ??
+                    "https://via.placeholder.com/200x250", // 👈 use productImg
+              ),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              color: Colors.black.withOpacity(0.4),
+              padding: const EdgeInsets.all(6),
+              child: Text(
+                "${product.name}\nRs. ${product.price ?? '-'}",
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// 🔹 Product List (Horizontal)
+  Widget _buildProductList(List<ProductModel> products) {
+    return SizedBox(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return Container(
+            width: 160,
+            margin: const EdgeInsets.only(right: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: DecorationImage(
+                image: NetworkImage(
+                  product.productImg ??
+                      "https://via.placeholder.com/160x180", // 👈 use productImg
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                color: Colors.black.withOpacity(0.4),
+                padding: const EdgeInsets.all(6),
+                child: Text(
+                  "${product.name}\nRs. ${product.price ?? '-'}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
 }

@@ -1,14 +1,35 @@
 import 'package:riverpod/riverpod.dart';
 import '../APIs/Categories Api/categories_api.dart';
 import '../Models/categories_model.dart';
+import '../Models/product_model.dart';
 
-/// 🔹 1. API service ko expose karna
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../APIs/Categories Api/product_by_id_api.dart';
+
+/// ✅ Selected Category ID StateProvider
+final selectedCategoryIdProvider = StateProvider<int>((ref) => 0);
+
+/// ✅ Categories API expose karna
 final categoryApiProvider = Provider<CategoryApi>((ref) {
   return CategoryApi();
 });
 
-/// 🔹 2. FutureProvider model ko use kar ky API ko call karega
+/// ✅ Products API expose karna
+final productsApiProvider = Provider<ProductApi>((ref) {
+  return ProductApi();
+});
+
+/// ✅ Categories ke liye FutureProvider (CategoryResponse use karega)
 final categoryProvider = FutureProvider<CategoryResponse>((ref) async {
   final api = ref.read(categoryApiProvider);
   return api.getCategory();
 });
+
+/// ✅ Products ke liye FutureProvider.family (Category ke hisaab se products fetch karega)
+final productProvider =
+FutureProvider.family<ProductBannerResponse, int>((ref, categoryId) async {
+  final api = ref.read(productsApiProvider);
+  return api.getProductsByCategory(categoryId);
+});
+
