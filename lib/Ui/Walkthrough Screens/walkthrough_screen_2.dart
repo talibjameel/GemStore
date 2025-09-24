@@ -57,7 +57,6 @@ class _WalkthroughScreen2State extends State<WalkthroughScreen2> {
                   children: [
                     const SizedBox(height: 60),
 
-                    // 👉 Dynamic Title
                     Text(
                       titles[_currentIndex],
                       style: const TextStyle(

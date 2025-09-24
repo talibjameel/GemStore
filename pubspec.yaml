@@ -17,6 +17,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   flutter_launcher_icons: ^0.14.4
   flutter_riverpod: ^2.5.1
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:

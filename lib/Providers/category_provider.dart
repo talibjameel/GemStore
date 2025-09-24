@@ -2,13 +2,10 @@ import 'package:riverpod/riverpod.dart';
 import '../APIs/Categories Api/categories_api.dart';
 import '../Models/categories_model.dart';
 import '../Models/product_model.dart';
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../APIs/Categories Api/product_by_id_api.dart';
 
-/// ✅ Selected Category ID StateProvider
-final selectedCategoryIdProvider = StateProvider<int>((ref) => 0);
+
 
 /// ✅ Categories API expose karna
 final categoryApiProvider = Provider<CategoryApi>((ref) {
@@ -33,3 +30,5 @@ FutureProvider.family<ProductBannerResponse, int>((ref, categoryId) async {
   return api.getProductsByCategory(categoryId);
 });
 
+/// ✅ Selected Category ID StateProvider
+final selectedCategoryIdProvider = StateProvider<int>((ref) => 1);
