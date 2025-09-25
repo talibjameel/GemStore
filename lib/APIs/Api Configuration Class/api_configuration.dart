@@ -1,6 +1,6 @@
 class ApiConfig {
   // Base URL
-  static const String baseUrl = "http://localhost:3000";
+  static const String baseUrl = "http://localhost:8600";
 
   // Endpoints
   static const String login = "$baseUrl/login";

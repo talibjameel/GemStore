@@ -1,3 +1,4 @@
+import 'package:ecommerce_store/Ui/Main%20Navigation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'Ui/Auth Screens/forgot_password.dart';
@@ -6,7 +7,8 @@ import 'Ui/Auth Screens/middle_ware.dart';
 import 'Ui/Auth Screens/opt_verification.dart';
 import 'Ui/Auth Screens/sign_up.dart';
 import 'Ui/Auth Screens/update_password.dart';
-import 'Ui/Main Navigation/profile.dart';
+import 'Ui/Main Navigation/my_order_screen.dart';
+import 'Ui/Main Navigation/search_screen.dart';
 import 'Ui/Notification Screens/notification_ui.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_1.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_2.dart';
@@ -35,6 +37,9 @@ class MyApp extends StatelessWidget {
         '/NotificationUI': (context) => const NotificationUi(),
         '/MainNavigation': (context) => const MainNavigation(),
         '/Home': (context) =>  Home(),
+        '/SearchScreen': (context) => const SearchScreen(),
+        '/MyOrderScreen': (context) => const MyOrderScreen(),
+        '/ProfileScreen': (context) => const ProfileScreen(),
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -58,9 +63,9 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> _screens = [
      Home(),
-    const Center(child: Text("Search Screen", style: TextStyle(fontSize: 20))),
-    const Center(child: Text("Notifications Screen", style: TextStyle(fontSize: 20))),
-    const Profile(),
+    const SearchScreen(),
+    const MyOrderScreen(),
+    const ProfileScreen(),
   ];
   /// 🔹Bottom navigationBar
   void _onItemTapped(int index) {

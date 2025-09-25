@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../Models/product_model.dart';
 import '../../Providers/category_provider.dart';
+import '../Product Details Screen/products_details_screen.dart';
 
 
 class Home extends ConsumerStatefulWidget {
@@ -17,10 +19,10 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // 👇 Watch selected category id
+    /// Watch selected category id
     final selectedCategoryId = ref.watch(selectedCategoryIdProvider);
 
-    // 👇 Watch categories data
+    /// Watch categories data
     final categoryAsync = ref.watch(categoryProvider);
 
     return Scaffold(
@@ -28,6 +30,7 @@ class _HomeState extends ConsumerState<Home> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0.0,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.black),
@@ -48,7 +51,7 @@ class _HomeState extends ConsumerState<Home> {
           ),
         ],
       ),
-      drawer: _buildDrawer(),
+      drawer:CustomNavigationDrawer(),
       body: Column(
         children: [
           /// 🔹 Categories Row
@@ -268,13 +271,6 @@ class _HomeState extends ConsumerState<Home> {
     );
   }
 
-  Widget _buildDrawer() {
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: const Center(child: Text("Drawer Placeholder")),
-    );
-  }
-
   /// 🔹 Section Title Widget
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -312,54 +308,68 @@ class _HomeState extends ConsumerState<Home> {
       itemBuilder: (context, index) {
         final product = products[index];
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // ==== Product Card with only Image ====
-            Card(
-              elevation: 3,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Container(
-                height: 200,
-                width: double.infinity,
-                color: Colors.grey[200],
-                child: Image.network(
-                  product.productImg ??
-                      "https://via.placeholder.com/300x400",
-                  fit: BoxFit.cover,
-                  errorBuilder: (ctx, err, st) => Image.network(
-                    "https://via.placeholder.com/300x400",
+        return GestureDetector(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                ProductDetailScreen(
+                  productName: product.name.toString(),
+                  productDescription: product.description.toString(),
+                  productPrice: product.price!.toString(),
+                  productImage: product.productImg.toString(),
+                  size: product.size.toString(),
+                  color: product.colors.toString(),
+                )
+            ));
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ==== Product Card with only Image ====
+              Card(
+                elevation: 3,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: Colors.grey[200],
+                  child: Image.network(
+                    product.productImg ??
+                        "https://via.placeholder.com/300x400",
                     fit: BoxFit.cover,
+                    errorBuilder: (ctx, err, st) => Image.network(
+                      "https://via.placeholder.com/300x400",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // ==== Title & Price OUTSIDE the card ====
-            const SizedBox(height: 6),
-            Text(
-              product.name ?? "No name",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
+              // ==== Title & Price OUTSIDE the card ====
+              const SizedBox(height: 6),
+              Text(
+                product.name ?? "No name",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            Text(
-              "\$ ${product.price ?? '-'}",
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF1B5E20), // green price color
+              Text(
+                "\$ ${product.price ?? '-'}",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF1B5E20), // green price color
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -375,56 +385,70 @@ class _HomeState extends ConsumerState<Home> {
         itemBuilder: (context, index) {
           final product = products[index];
 
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Container(
-              width: 240,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  // ==== Product Image ====
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      product.productImg ??
-                          "https://via.placeholder.com/100x100",
-                      height: 80,
-                      width: 80,
-                      fit: BoxFit.cover,
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>
+              ProductDetailScreen(
+                  productName: product.name.toString(),
+                  productDescription: product.description.toString(),
+                  productPrice: product.price!.toString(),
+                  productImage: product.productImg.toString(),
+                  size: product.size.toString(),
+                  color: product.colors.toString(),
+              )
+              ));
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                width: 240,
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    // ==== Product Image ====
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        product.productImg ??
+                            "https://via.placeholder.com/100x100",
+                        height: 80,
+                        width: 80,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-                  // ==== Product Info ====
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          product.name ?? "No name",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                    // ==== Product Info ====
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            product.name ?? "No name",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "\$ ${product.price ?? '-'}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Color(0xFF1B5E20), // dark green price
+                          const SizedBox(height: 4),
+                          Text(
+                            "\$ ${product.price ?? '-'}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xFF1B5E20),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );
@@ -457,6 +481,7 @@ class _BannerSliderState extends State<BannerSlider> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Title name: ${widget.banner.title}');
     final images = widget.banner.bannerImg ?? [];
 
     if (images.isEmpty) {
@@ -502,27 +527,25 @@ class _BannerSliderState extends State<BannerSlider> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.black.withValues(alpha: 0.6),
+                            Colors.black.withOpacity(0.6),
                             Colors.transparent,
                           ],
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                         ),
                       ),
-                      padding: const EdgeInsets.only(bottom: 60,left: 20),
+                      padding: const EdgeInsets.only(bottom: 60,left: 215),
                       alignment: Alignment.centerLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (widget.showTitle && widget.banner.title != null)
-                            Text(
-                              widget.banner.title!,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            TextWidget(
+                              text:widget.banner.title!.replaceAll(r'\n', '\n'),
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           if (widget.showDescription && widget.banner.description != null)
                             const SizedBox(height: 8),
@@ -562,7 +585,7 @@ class _BannerSliderState extends State<BannerSlider> {
                     height: isActive ? 12 : 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
+                      color: isActive ? Colors.white : Colors.white.withOpacity(0.4),
                     ),
                   );
                 },
@@ -570,6 +593,167 @@ class _BannerSliderState extends State<BannerSlider> {
             ),
           ),
       ],
+    );
+  }
+}
+
+
+class CustomNavigationDrawer extends StatelessWidget {
+  const CustomNavigationDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+      width: MediaQuery.of(context).size.width * 0.75, // 75% screen width
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 🔹 Profile Section
+              Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 28,
+                    backgroundImage: AssetImage("assets/images/profile.png"),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Sunie Pham",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        "sunieux@gmail.com",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              /// 🔹 Menu Items
+              _buildDrawerItem(Icons.home, "Homepage", true),
+              _buildDrawerItem(Icons.search, "Discover"),
+              _buildDrawerItem(Icons.shopping_bag_outlined, "My Order"),
+              _buildDrawerItem(Icons.person_outline, "My Profile"),
+
+              const SizedBox(height: 10),
+              const Text(
+                "OTHER",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              _buildDrawerItem(Icons.settings_outlined, "Setting"),
+              _buildDrawerItem(Icons.email_outlined, "Support"),
+              _buildDrawerItem(Icons.info_outline, "About us"),
+
+              const Spacer(),
+
+              /// 🔹 Light / Dark Toggle
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildToggleButton(Icons.wb_sunny_outlined, "Light", true),
+                    _buildToggleButton(Icons.nightlight_round, "Dark", false),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 🔹 Drawer Item Builder
+  Widget _buildDrawerItem(IconData icon, String title, [bool selected = false]) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: selected ? Colors.grey.shade100 : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: selected ? Colors.black : Colors.grey),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: selected ? FontWeight.bold : FontWeight.w400,
+            color: selected ? Colors.black : Colors.grey.shade700,
+          ),
+        ),
+        onTap: () {},
+      ),
+    );
+  }
+
+  /// 🔹 Theme Toggle Button
+  Widget _buildToggleButton(IconData icon, String label, bool active) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: active
+              ? [
+            BoxShadow(
+              color: Colors.black.withOpacity(.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ]
+              : [],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: active ? Colors.black : Colors.grey),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: active ? Colors.black : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -15,7 +15,6 @@ dependencies:
   flutter_svg: ^2.2.1
   http: ^1.5.0
   flutter_secure_storage: ^9.2.4
-  flutter_launcher_icons: ^0.14.4
   flutter_riverpod: ^2.5.1
   carousel_slider: ^5.1.1
 
@@ -41,7 +40,7 @@ flutter:
      - res/TopButton/Accessories.svg
      - res/TopButton/Beauty.svg
 flutter_launcher_icons:
-  Android: true
+  android: true
   ios: true
   image_path: res/AppIcon/AppIcon.png
 
