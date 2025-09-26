@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../Models/product_model.dart';
 import '../../Providers/category_provider.dart';
 import '../Product Details Screen/products_details_screen.dart';
+import '../Product Details Screen/sub_category_products.dart';
 
 
 class Home extends ConsumerStatefulWidget {
@@ -189,7 +190,14 @@ class _HomeState extends ConsumerState<Home> {
                       BannerSlider(banner: topBanner.first),
 
                     if (featureProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Feature Products"),
+                      _buildSectionTitle("Feature Products",(){
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                            SubCategoryProductsScreen(subCategoryName: "featured",isSubCategory: false)
+                          )
+                        );
+
+                      }),
                       _buildProductGrid(featureProducts),
                     ],
 
@@ -203,12 +211,22 @@ class _HomeState extends ConsumerState<Home> {
                       ),
 
                     if (recommendedProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Recommended"),
+                      _buildSectionTitle("Recommended",(){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                            SubCategoryProductsScreen(subCategoryName: "recommended",isSubCategory: false)
+                          )
+                        );
+                      }),
                       _buildProductList(recommendedProducts),
                     ],
 
                     if (topCollectionProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Top Collection"),
+                      _buildSectionTitle("Top Collection",(){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                            SubCategoryProductsScreen(subCategoryName: "topCollection",isSubCategory: false)
+                         )
+                        );
+                      }),
                       _buildProductGrid(topCollectionProducts),
                     ],
 
@@ -224,26 +242,38 @@ class _HomeState extends ConsumerState<Home> {
                           const EdgeInsets.symmetric(horizontal: 16),
                           itemBuilder: (context, index) {
                             final banner = bottomBanner[index];
-                            return Row(
-                              children: banner.bannerImg!.map((imgUrl) {
-                                return Container(
-                                  width: 150,
-                                  height: 350,
-                                  margin:
-                                  const EdgeInsets.only(right: 12),
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(12),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Image.network(
-                                      imgUrl,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                            return GestureDetector(
+                              onTap: (){
+                                debugPrint("SubCategory name : ${banner.title}");
+                                Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                    SubCategoryProductsScreen(
+                                        subCategoryName: banner.title.toString(),
+                                        isSubCategory: true
+                                    )
+                                  )
                                 );
-                              }).toList(),
+                              },
+                              child: Row(
+                                children: banner.bannerImg!.map((imgUrl) {
+                                  return Container(
+                                    width: 150,
+                                    height: 350,
+                                    margin:
+                                    const EdgeInsets.only(right: 12),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(12),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Image.network(
+                                        imgUrl,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
                             );
                           },
                         ),
@@ -272,7 +302,7 @@ class _HomeState extends ConsumerState<Home> {
   }
 
   /// 🔹 Section Title Widget
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title,VoidCallback onPressed) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       child: Row(
@@ -283,9 +313,12 @@ class _HomeState extends ConsumerState<Home> {
             title,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const Text(
-            "Show all",
-            style: TextStyle(color: Colors.grey),
+          TextButton(
+            onPressed: onPressed,
+            child: Text(
+              "Show all",
+              style: TextStyle(color: Colors.grey),
+            ),
           ),
         ],
       ),
@@ -318,6 +351,7 @@ class _HomeState extends ConsumerState<Home> {
                   productImage: product.productImg.toString(),
                   size: product.size.toString(),
                   color: product.colors.toString(),
+                  rating: product.rating.toString(),
                 )
             ));
           },
@@ -395,6 +429,7 @@ class _HomeState extends ConsumerState<Home> {
                   productImage: product.productImg.toString(),
                   size: product.size.toString(),
                   color: product.colors.toString(),
+                  rating: product.rating.toString(),
               )
               ));
             },
@@ -481,7 +516,6 @@ class _BannerSliderState extends State<BannerSlider> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Title name: ${widget.banner.title}');
     final images = widget.banner.bannerImg ?? [];
 
     if (images.isEmpty) {
@@ -527,7 +561,7 @@ class _BannerSliderState extends State<BannerSlider> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.black.withOpacity(0.6),
+                            Colors.black.withValues(alpha: .6),
                             Colors.transparent,
                           ],
                           begin: Alignment.centerLeft,
@@ -585,7 +619,7 @@ class _BannerSliderState extends State<BannerSlider> {
                     height: isActive ? 12 : 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isActive ? Colors.white : Colors.white.withOpacity(0.4),
+                      color: isActive ? Colors.white : Colors.white.withValues(alpha:0.4),
                     ),
                   );
                 },
@@ -731,7 +765,7 @@ class CustomNavigationDrawer extends StatelessWidget {
           boxShadow: active
               ? [
             BoxShadow(
-              color: Colors.black.withOpacity(.05),
+              color: Colors.black.withValues(alpha:0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             )

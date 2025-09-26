@@ -10,5 +10,7 @@ class ApiConfig {
   static const String updatePassword = "$baseUrl/update-password";
   static const String categories = "$baseUrl/categories";
   static const String categoriesProducts = "$baseUrl/products/category/:id";
+  static const String subCategories = "$baseUrl/subcategories/:string";
+  static const String productsType = "$baseUrl/products/:string";
 
 }

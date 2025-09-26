@@ -7,6 +7,7 @@ class ProductDetailScreen extends StatefulWidget {
   final String productImage;
   final String size;
   final String color;
+  final String rating;
 
   const ProductDetailScreen({
     super.key,
@@ -16,15 +17,36 @@ class ProductDetailScreen extends StatefulWidget {
     required this.productImage,
     required this.size,
     required this.color,
+    required this.rating,
   });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
-
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int _selectedColorIndex = 0;
   int _selectedSizeIndex = 0;
+
+  late List<String> sizes;
+  late List<String> colors;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔹 String ko List me convert karna (comma separated)
+    sizes = widget.size.isNotEmpty
+        ? widget.size.split(',').map((e) => e.trim()).toList()
+        : [];
+
+    colors = widget.color.isNotEmpty
+        ? widget.color.split(',').map((e) => e.trim()).toList()
+        : [];
+
+    debugPrint("Products Sizes => $sizes");
+    debugPrint("Products Colors => $colors");
+    debugPrint("Products Rating => ${widget.rating}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,54 +54,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       backgroundColor: const Color(0xFFF7F7F7),
       body: Stack(
         children: [
-          // 🔹 Product Image Section
+          // 🔹 Full width Product Image Section
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.50,
-              color: Colors.white,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Positioned(
-                    top: -120,
-                    child: Container(
-                      width: 500,
-                      height: 500,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFEF2F2),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
+              width: double.infinity,
+              child: Image.network(
+                widget.productImage,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          // 🔹 Back button
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back_ios,
+                        color: Colors.black, size: 20),
                   ),
-                  Positioned(
-                    top: 50,
-                    child: Image.network(
-                      widget.productImage,
-                      height: 380,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  // 🔹 Back button
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.arrow_back_ios,
-                                color: Colors.black, size: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -90,7 +93,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             left: 0,
             right: 0,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.55,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -106,12 +109,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-                child: SingleChildScrollView( // ✅ Prevent overflow
+                padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 🔹 Title & Price
+                      /// 🔹 Title & Price
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -120,7 +124,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               )),
-                          Text(widget.productPrice,
+                          Text("\$${widget.productPrice}",
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -129,50 +133,76 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      // 🔹 Rating
+
+                      /// 🔹 Rating
                       Row(
                         children: [
                           Row(
                             children: List.generate(
                               5,
                                   (index) => Icon(
-                                index < 4 ? Icons.star : Icons.star_border,
+                                index < double.parse(widget.rating).round()
+                                    ? Icons.star
+                                    : Icons.star_border,
                                 color: Colors.green,
                                 size: 20,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Text('(83)', style: TextStyle(color: Colors.grey)),
+                          Text(widget.rating,
+                              style: const TextStyle(color: Colors.grey)),
                         ],
                       ),
+
                       const SizedBox(height: 20),
-                      // 🔹 Colors Dynamic
-                      const Text('Color',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 10),
-                      // Row(
-                      //   children: List.generate(
-                      //     widget.colors.length,
-                      //         (index) => _buildColorSwatch(widget.colors[index], index),
-                      //   ),
-                      // ),
-                      const SizedBox(height: 20),
-                      // 🔹 Sizes Dynamic
-                      const Text('Size',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 10),
-                      // Row(
-                      //   children: List.generate(
-                      //     widget.sizes.length,
-                      //         (index) => _buildSizeButton(widget.sizes[index], index),
-                      //   ),
-                      // ),
-                      const SizedBox(height: 20),
-                      _buildSection('Description'),
-                      _buildSection('Reviews'),
+
+                      /// 🔹 Colors & Sizes
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // 🔹 Colors Dynamic
+                          if (colors.isNotEmpty && colors != 'null') ...[
+                           Column(
+                             children: [
+                               const Text(
+                                   'Colors',
+                                   style: TextStyle(
+                                       fontSize: 12, fontWeight: FontWeight.w600)),
+                               const SizedBox(height: 10),
+                               Row(
+                                 children: List.generate(
+                                   colors.length,
+                                       (index) => _buildColorCircle(colors[index], index),
+                                 ),
+                               ),
+                             ],
+                           )
+                          ],
+
+                          // 🔹 Sizes Dynamic
+                          if (sizes.isNotEmpty && sizes != 'null') ...[
+                           Column(
+                             children: [
+                               const Text('Sizes',
+                                   style: TextStyle(
+                                       fontSize: 12, fontWeight: FontWeight.w600)),
+                               const SizedBox(height: 10),
+                               Row(
+                                 children: List.generate(
+                                   sizes.length,
+                                       (index) => _buildSizeButton(sizes[index], index),
+                                 ),
+                               ),
+                             ],
+                           )
+                          ],
+                        ],
+                      ),
+
+
+                      ExpandableSection(title: 'Description',value:  widget.productDescription),
+                      ExpandableSection(title: 'Reviews' ,value:  "No reviews yet."),
                     ],
                   ),
                 ),
@@ -184,7 +214,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 100,
+              height: 60,
               decoration: const BoxDecoration(
                 color: Color(0xFF1F1F1F),
                 borderRadius: BorderRadius.only(
@@ -215,72 +245,143 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  // 🔹 Color Swatch Builder
-  Widget _buildColorSwatch(Color color, int index) {
+  /// 🔹 Color Circle Builder (based on backend color name)
+  Widget _buildColorCircle(String colorName, int index) {
     bool isSelected = _selectedColorIndex == index;
+
+    final Map<String, Color> colorMap = {
+      'black': Colors.black,
+      'white': Colors.white,
+      'red': Colors.red,
+      'blue': Colors.blue,
+      'green': Colors.green,
+      'yellow': Colors.yellow,
+      'orange': Colors.orange,
+      'purple': Colors.purple,
+      'pink': Colors.pink,
+      'grey': Colors.grey,
+      'brown': Colors.brown,
+    };
+
+    Color circleColor = colorMap[colorName.toLowerCase().trim()] ?? Colors.grey;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedColorIndex = index),
-      child: Container(
-        margin: const EdgeInsets.only(right: 12),
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: isSelected
-              ? Border.all(color: Colors.blue, width: 3)
-              : null,
+      child: Material(
+        shape: const CircleBorder(),
+        elevation: isSelected ? 6 : 2,
+        shadowColor: Colors.black26,
+        child: Container(
+          width: 35,
+          height: 35,
+          padding: const EdgeInsets.all(6),
+          margin: const EdgeInsets.only(right: 12),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: circleColor,
+            border: Border.all(
+              color: isSelected ? Colors.white70 : Colors.transparent,
+              width: 2,
+            ),
+          ),
         ),
-        child: isSelected
-            ? const Icon(Icons.check, color: Colors.white, size: 20)
-            : null,
       ),
     );
   }
+
 
   // 🔹 Size Button Builder
   Widget _buildSizeButton(String size, int index) {
     bool isSelected = _selectedSizeIndex == index;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedSizeIndex = index),
       child: Container(
-        width: 50,
-        height: 50,
+        width: 35,
+        height: 35,
         margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(15),
-          border: isSelected ? Border.all(color: Colors.black, width: 2) : null,
+          shape: BoxShape.circle,
+          color: isSelected ? const Color(0xFF515151) : const Color(0xFFFAFAFA),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
         ),
         child: Center(
-          child: Text(size,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            size,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildSection(String title) {
+class ExpandableSection extends StatefulWidget {
+  final String title;
+  final String value;
+
+  const ExpandableSection({
+    super.key,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  State<ExpandableSection> createState() => _ExpandableSectionState();
+}
+class _ExpandableSectionState extends State<ExpandableSection> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        const Divider(color: Colors.grey),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title,
+        const Divider(color: Color(0xFFF3F3F6)),
+        InkWell(
+          onTap: () => setState(() => _isExpanded = !_isExpanded),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.title,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600)),
-              const Icon(Icons.arrow_forward_ios,
-                  color: Colors.grey, size: 18),
-            ],
+                      fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                Icon(
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.grey,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
+
+        // 🔹 Show content only when expanded
+        if (_isExpanded)
+          Container(
+            width: double.infinity,
+            padding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(
+              widget.value,
+              style: const TextStyle(fontSize: 15, color: Colors.black54),
+            ),
+          ),
       ],
     );
   }

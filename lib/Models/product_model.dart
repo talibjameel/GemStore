@@ -59,6 +59,7 @@ class ProductModel {
   final String? updatedAt;
   final String? productImg;
   final bool? topCollection;
+  final String? productsCategory;
 
   ProductModel({
     this.id,
@@ -77,6 +78,7 @@ class ProductModel {
     this.updatedAt,
     this.productImg,
     this.topCollection,
+    this.productsCategory,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -97,6 +99,7 @@ class ProductModel {
       updatedAt: json['updated_at'] as String?,
       productImg: json['product_img'] as String?,
       topCollection: json['top_collection'] as bool?,
+      productsCategory: json['products_category'] as String?,
     );
   }
 
@@ -118,6 +121,7 @@ class ProductModel {
       "updated_at": updatedAt,
       "product_img": productImg,
       "top_collection": topCollection,
+      "products_category": productsCategory,
     };
   }
 }
