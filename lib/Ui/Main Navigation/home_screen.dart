@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +14,7 @@ class Home extends ConsumerStatefulWidget {
   @override
   ConsumerState<Home> createState() => _HomeState();
 }
+
 class _HomeState extends ConsumerState<Home> {
   int _selectedIndex = 0;
 
@@ -52,257 +52,250 @@ class _HomeState extends ConsumerState<Home> {
           ),
         ],
       ),
-      drawer:CustomNavigationDrawer(),
-      body: Column(
-        children: [
-          /// 🔹 Categories Row
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            child: categoryAsync.when(
-              data: (categoryResponse) {
-                final categories = categoryResponse.categories ?? [];
-
-                if (categories.isEmpty) {
-                  return const Center(child: Text("No categories"));
-                }
-
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(categories.length, (index) {
-                    final cat = categories[index];
-                    final bool isSelected = _selectedIndex == index;
-
-                    return GestureDetector(
+      drawer: const CustomNavigationDrawer(),
+      body: Expanded(
+        child: Column(
+          children: [
+            /// 🔹 Categories Row
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              child: categoryAsync.when(
+                data: (categoryResponse) {
+                  final categories = categoryResponse.categories ?? [];
+        
+                  if (categories.isEmpty) {
+                    return const Center(child: Text("No categories"));
+                  }
+        
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(categories.length, (index) {
+                      final cat = categories[index];
+                      final bool isSelected = _selectedIndex == index;
+        
+                      return GestureDetector(
                         onTap: () {
                           setState(() {
                             _selectedIndex = index;
                           });
                           final newCatId = cat.id ?? 0;
                           debugPrint("UI: Tapped category '${cat.name}', original cat.id: ${cat.id}, ID sent to provider: $newCatId");
-                          ref
-                              .read(selectedCategoryIdProvider.notifier)
-                              .state = newCatId;
+                          ref.read(selectedCategoryIdProvider.notifier).state = newCatId;
                         },
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 55,
-                            height: 55,
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isSelected
-                                  ? const Color(0xFF3A2C27)
-                                  : Colors.transparent,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 55,
+                              height: 55,
+                              padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isSelected
-                                    ? const Color(0xFF3A2C27)
-                                    : const Color(0xFFF3F3F3),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.transparent,
-                                  width: 2,
+                                color: isSelected ? const Color(0xFF3A2C27) : Colors.transparent,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isSelected ? const Color(0xFF3A2C27) : const Color(0xFFF3F3F3),
+                                  border: Border.all(
+                                    color: isSelected ? Colors.white : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: SvgPicture.network(
+                                  cat.icon.toString(),
+                                  colorFilter: isSelected
+                                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                                      : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                                  height: 24,
+                                  width: 24,
+                                  fit: BoxFit.contain,
+                                  placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                  errorBuilder: (context, error, stackTrace) => const Icon(
+                                    Icons.broken_image,
+                                    size: 24,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
-                              child: SvgPicture.network(
-                                cat.icon.toString(),
-                                colorFilter: isSelected
-                                    ? const ColorFilter.mode(
-                                    Colors.white, BlendMode.srcIn)
-                                    : const ColorFilter.mode(
-                                    Colors.grey, BlendMode.srcIn),
-                                height: 24,
-                                width: 24,
-                                fit: BoxFit.contain,
-                                placeholderBuilder: (context) =>
-                                const CircularProgressIndicator(),
-                                errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.broken_image,
-                                    size: 24, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              cat.name ?? "No Name",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                                color: isSelected ? Colors.black : Colors.black54,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            cat.name ?? "No Name",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
-                              color: isSelected
-                                  ? Colors.black
-                                  : Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                );
-              },
-              loading: () =>
-              const Center(child: CircularProgressIndicator()),
-              error: (err, stack) =>
-                  Center(child: Text("Error loading categories: $err")),
+                          ],
+                        ),
+                      );
+                    }),
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text("Error loading categories: $err")),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          /// 🔹 Products List
-          Expanded(
-            child: ref.watch(productProvider(selectedCategoryId)).when(
-              data: (response) {
-                final products = response.products ?? [];
-                final banners = response.banners ?? [];
-
-                if (products.isEmpty && banners.isEmpty) {
-                  return const Center(child: Text("No products"));
-                }
-
-                // 🔥 Same logic as before
-                final featureProducts =
-                products.where((p) => p.isFeatured == true).toList();
-                final recommendedProducts =
-                products.where((p) => p.isRecommended == true).toList();
-                final topCollectionProducts =
-                products.where((p) => p.topCollection == true).toList();
-
-                final topBanner = banners
-                    .where((b) => b.position?.toLowerCase() == "top")
-                    .toList();
-                final middleBanner = banners
-                    .where((b) => b.position?.toLowerCase() == "middle")
-                    .toList();
-                final bottomBanner = banners
-                    .where((b) => b.position?.toLowerCase() == "bottom")
-                    .toList();
-
-                return ListView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 8),
-                  children: [
-                    if (topBanner.isNotEmpty)
-                      BannerSlider(banner: topBanner.first),
-
-                    if (featureProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Feature Products",(){
-
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            SubCategoryProductsScreen(subCategoryName: "featured",isSubCategory: false)
-                          )
-                        );
-
-                      }),
-                      _buildProductGrid(featureProducts),
-                    ],
-
-                    const SizedBox(height: 20),
-                    if (middleBanner.isNotEmpty)
-                      _buildBanner(
-                        middleBanner.first,
-                        showIndicator: false,
-                        showTitle: false,
-                        showDescription: false,
-                      ),
-
-                    if (recommendedProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Recommended",(){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            SubCategoryProductsScreen(subCategoryName: "recommended",isSubCategory: false)
-                          )
-                        );
-                      }),
-                      _buildProductList(recommendedProducts),
-                    ],
-
-                    if (topCollectionProducts.isNotEmpty) ...[
-                      _buildSectionTitle("Top Collection",(){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                            SubCategoryProductsScreen(subCategoryName: "topCollection",isSubCategory: false)
-                         )
-                        );
-                      }),
-                      _buildProductGrid(topCollectionProducts),
-                    ],
-
-                    const SizedBox(height: 20),
-
-                    if (bottomBanner.isNotEmpty)
-                      SizedBox(
-                        height: 150,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: bottomBanner.length,
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 16),
-                          itemBuilder: (context, index) {
-                            final banner = bottomBanner[index];
-                            return GestureDetector(
-                              onTap: (){
-                                debugPrint("SubCategory name : ${banner.title}");
-                                Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                    SubCategoryProductsScreen(
+        
+            const SizedBox(height: 16),
+        
+            /// 🔹 Products List
+            Expanded(
+              child: ref.watch(productProvider(selectedCategoryId)).when(
+                data: (response) {
+                  final products = response.products ?? [];
+                  final banners = response.banners ?? [];
+        
+                  if (products.isEmpty && banners.isEmpty) {
+                    return const Center(child: Text("No products"));
+                  }
+        
+                  // 🔥 Same logic as before
+                  final featureProducts = products.where((p) => p.isFeatured == true).toList();
+                  final recommendedProducts = products.where((p) => p.isRecommended == true).toList();
+                  final topCollectionProducts = products.where((p) => p.topCollection == true).toList();
+        
+                  final topBanner = banners.where((b) => b.position?.toLowerCase() == "top").toList();
+                  final middleBanner = banners.where((b) => b.position?.toLowerCase() == "middle").toList();
+                  final bottomBanner = banners.where((b) => b.position?.toLowerCase() == "bottom").toList();
+        
+                  return ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    children: [
+                      if (topBanner.isNotEmpty)
+                        BannerSlider(banner: topBanner.first),
+        
+                      if (featureProducts.isNotEmpty) ...[
+                        _buildSectionTitle("Feature Products", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubCategoryProductsScreen(
+                                subCategoryName: "featured",
+                                isSubCategory: false,
+                              ),
+                            ),
+                          );
+                        }),
+                        _buildProductGrid(featureProducts),
+                      ],
+        
+                      const SizedBox(height: 20),
+                      if (middleBanner.isNotEmpty)
+                        _buildBanner(
+                          middleBanner.first,
+                          showIndicator: false,
+                          showTitle: false,
+                          showDescription: false,
+                        ),
+        
+                      if (recommendedProducts.isNotEmpty) ...[
+                        _buildSectionTitle("Recommended", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubCategoryProductsScreen(
+                                subCategoryName: "recommended",
+                                isSubCategory: false,
+                              ),
+                            ),
+                          );
+                        }),
+                        _buildProductList(recommendedProducts),
+                      ],
+        
+                      if (topCollectionProducts.isNotEmpty) ...[
+                        _buildSectionTitle("Top Collection", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubCategoryProductsScreen(
+                                subCategoryName: "topCollection",
+                                isSubCategory: false,
+                              ),
+                            ),
+                          );
+                        }),
+                        _buildProductGrid(topCollectionProducts),
+                      ],
+        
+                      const SizedBox(height: 20),
+        
+                      if (bottomBanner.isNotEmpty)
+                        SizedBox(
+                          height: 150,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: bottomBanner.length,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemBuilder: (context, index) {
+                              final banner = bottomBanner[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  debugPrint("SubCategory name: ${banner.title}");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SubCategoryProductsScreen(
                                         subCategoryName: banner.title.toString(),
-                                        isSubCategory: true
-                                    )
-                                  )
-                                );
-                              },
-                              child: Row(
-                                children: banner.bannerImg!.map((imgUrl) {
-                                  return Container(
-                                    width: 150,
-                                    height: 350,
-                                    margin:
-                                    const EdgeInsets.only(right: 12),
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(12),
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.network(
-                                        imgUrl,
-                                        fit: BoxFit.cover,
+                                        isSubCategory: true,
                                       ),
                                     ),
                                   );
-                                }).toList(),
-                              ),
-                            );
-                          },
+                                },
+                                child: Row(
+                                  children: banner.bannerImg!.map((imgUrl) {
+                                    return Container(
+                                      width: 150,
+                                      height: 150,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Image.network(
+                                          imgUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) => Image.network(
+                                            "https://via.placeholder.com/150x150",
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                  ],
-                );
-              },
-              loading: () =>
-              const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text("Error: $err")),
+                    ],
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text("Error: $err")),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  _buildBanner(BannerModel banner, {bool showIndicator = true, bool showTitle = true, bool showDescription = true})
-  {
+  _buildBanner(BannerModel banner, {bool showIndicator = true, bool showTitle = true, bool showDescription = true}) {
     return BannerSlider(
-        banner: banner,
-        showIndicator: showIndicator,
-        showTitle: showTitle,
-        showDescription: showDescription
+      banner: banner,
+      showIndicator: showIndicator,
+      showTitle: showTitle,
+      showDescription: showDescription,
     );
   }
 
   /// 🔹 Section Title Widget
-  Widget _buildSectionTitle(String title,VoidCallback onPressed) {
+  Widget _buildSectionTitle(String title, VoidCallback onPressed) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       child: Row(
@@ -315,7 +308,7 @@ class _HomeState extends ConsumerState<Home> {
           ),
           TextButton(
             onPressed: onPressed,
-            child: Text(
+            child: const Text(
               "Show all",
               style: TextStyle(color: Colors.grey),
             ),
@@ -336,15 +329,17 @@ class _HomeState extends ConsumerState<Home> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.6,
+        childAspectRatio: 0.65, // Increased to provide more vertical space
       ),
       itemBuilder: (context, index) {
         final product = products[index];
 
         return GestureDetector(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                ProductDetailScreen(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailScreen(
                   productName: product.name.toString(),
                   productDescription: product.description.toString(),
                   productPrice: product.price!.toString(),
@@ -352,27 +347,24 @@ class _HomeState extends ConsumerState<Home> {
                   size: product.size.toString(),
                   color: product.colors.toString(),
                   rating: product.rating.toString(),
-                )
-            ));
+                ),
+              ),
+            );
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // ==== Product Card with only Image ====
-              Card(
-                elevation: 3,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
-                  color: Colors.grey[200],
+              Expanded(
+                child: Card(
+                  elevation: 3,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  clipBehavior: Clip.antiAlias,
                   child: Image.network(
-                    product.productImg ??
-                        "https://via.placeholder.com/300x400",
+                    product.productImg ?? "https://via.placeholder.com/300x400",
                     fit: BoxFit.cover,
                     errorBuilder: (ctx, err, st) => Image.network(
                       "https://via.placeholder.com/300x400",
@@ -381,7 +373,6 @@ class _HomeState extends ConsumerState<Home> {
                   ),
                 ),
               ),
-
               // ==== Title & Price OUTSIDE the card ====
               const SizedBox(height: 6),
               Text(
@@ -421,17 +412,20 @@ class _HomeState extends ConsumerState<Home> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>
-              ProductDetailScreen(
-                  productName: product.name.toString(),
-                  productDescription: product.description.toString(),
-                  productPrice: product.price!.toString(),
-                  productImage: product.productImg.toString(),
-                  size: product.size.toString(),
-                  color: product.colors.toString(),
-                  rating: product.rating.toString(),
-              )
-              ));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductDetailScreen(
+                    productName: product.name.toString(),
+                    productDescription: product.description.toString(),
+                    productPrice: product.price!.toString(),
+                    productImage: product.productImg.toString(),
+                    size: product.size.toString(),
+                    color: product.colors.toString(),
+                    rating: product.rating.toString(),
+                  ),
+                ),
+              );
             },
             child: Card(
               shape: RoundedRectangleBorder(
@@ -446,15 +440,17 @@ class _HomeState extends ConsumerState<Home> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        product.productImg ??
-                            "https://via.placeholder.com/100x100",
+                        product.productImg ?? "https://via.placeholder.com/100x100",
                         height: 80,
                         width: 80,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Image.network(
+                          "https://via.placeholder.com/100x100",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     // ==== Product Info ====
                     Expanded(
                       child: Column(
@@ -481,7 +477,7 @@ class _HomeState extends ConsumerState<Home> {
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -491,7 +487,6 @@ class _HomeState extends ConsumerState<Home> {
       ),
     );
   }
-
 }
 
 class BannerSlider extends StatefulWidget {
@@ -511,6 +506,7 @@ class BannerSlider extends StatefulWidget {
   @override
   State<BannerSlider> createState() => _BannerSliderState();
 }
+
 class _BannerSliderState extends State<BannerSlider> {
   int _currentIndex = 0;
 
@@ -525,112 +521,115 @@ class _BannerSliderState extends State<BannerSlider> {
       );
     }
 
-    return Stack(
-      children: [
-        CarouselSlider.builder(
-          itemCount: images.length,
-          options: CarouselOptions(
-            height: 180,
-            viewportFraction: 1.0,
-            enableInfiniteScroll: true,
-            autoPlay: true,
-            onPageChanged: (index, reason) {
-              setState(() => _currentIndex = index);
+    return SizedBox(
+      height: 180, // Constrain total height including carousel and indicators
+      child: Stack(
+        children: [
+          CarouselSlider.builder(
+            itemCount: images.length,
+            options: CarouselOptions(
+              height: 180,
+              viewportFraction: 1.0,
+              enableInfiniteScroll: true,
+              autoPlay: true,
+              onPageChanged: (index, reason) {
+                setState(() => _currentIndex = index);
+              },
+            ),
+            itemBuilder: (context, index, realIndex) {
+              final imgUrl = images[index];
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      imgUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.network(
+                        "https://via.placeholder.com/300x150",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    // Gradient + Title/Description on bottom-left
+                    if (widget.showTitle || widget.showDescription)
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withValues(alpha:  0.6),
+                              Colors.transparent,
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                        ),
+                        padding: const EdgeInsets.only(left: 16, bottom: 16),
+                        alignment: Alignment.bottomLeft,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (widget.showTitle && widget.banner.title != null)
+                              Text(
+                                widget.banner.title!.replaceAll(r'\n', '\n'),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20, // Reduced from 24
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            if (widget.showDescription && widget.banner.description != null)
+                              Text(
+                                widget.banner.description!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14, // Reduced from 16
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              );
             },
           ),
-          itemBuilder: (context, index, realIndex) {
-            final imgUrl = images[index];
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    imgUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Image.network(
-                          "https://via.placeholder.com/300x150",
-                          fit: BoxFit.cover,
-                        ),
-                  ),
-
-                  // Gradient + Title/Description on LEFT side
-                  if (widget.showTitle || widget.showDescription)
-                    Container(
+          // Dots indicator
+          if (widget.showIndicator)
+            Positioned(
+              bottom: 8, // Adjusted to fit within 180px
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  images.length,
+                      (index) {
+                    final isActive = _currentIndex == index;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: isActive ? 10 : 6,
+                      height: isActive ? 10 : 6,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withValues(alpha: .6),
-                            Colors.transparent,
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
+                        shape: BoxShape.circle,
+                        color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.4),
                       ),
-                      padding: const EdgeInsets.only(bottom: 60,left: 215),
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (widget.showTitle && widget.banner.title != null)
-                            TextWidget(
-                              text:widget.banner.title!.replaceAll(r'\n', '\n'),
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          if (widget.showDescription && widget.banner.description != null)
-                            const SizedBox(height: 8),
-                          if (widget.showDescription && widget.banner.description != null)
-                            Text(
-                              widget.banner.description!,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
-
-        // Dots indicator
-        if (widget.showIndicator)
-          Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                images.length,
-                    (index) {
-                  final isActive = _currentIndex == index;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: isActive ? 12 : 8,
-                    height: isActive ? 12 : 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isActive ? Colors.white : Colors.white.withValues(alpha:0.4),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
-
 
 class CustomNavigationDrawer extends StatelessWidget {
   const CustomNavigationDrawer({super.key});
