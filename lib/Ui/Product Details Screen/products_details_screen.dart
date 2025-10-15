@@ -213,29 +213,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           // 🔹 Add to cart
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 60,
-              decoration: const BoxDecoration(
-                color: Color(0xFF1F1F1F),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25.0),
-                  topRight: Radius.circular(25.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/AddToCartScreen');
+              },
+              child: Container(
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1F1F1F),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25.0),
+                    topRight: Radius.circular(25.0),
+                  ),
                 ),
-              ),
-              child: const Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.shopping_bag_outlined,
-                        color: Colors.white, size: 24),
-                    SizedBox(width: 10),
-                    Text('Add To Cart',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ],
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_bag_outlined,
+                          color: Colors.white, size: 24),
+                      SizedBox(width: 10),
+                      Text('Add To Cart',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -53,234 +53,232 @@ class _HomeState extends ConsumerState<Home> {
         ],
       ),
       drawer: const CustomNavigationDrawer(),
-      body: Expanded(
-        child: Column(
-          children: [
-            /// 🔹 Categories Row
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              child: categoryAsync.when(
-                data: (categoryResponse) {
-                  final categories = categoryResponse.categories ?? [];
-        
-                  if (categories.isEmpty) {
-                    return const Center(child: Text("No categories"));
-                  }
-        
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(categories.length, (index) {
-                      final cat = categories[index];
-                      final bool isSelected = _selectedIndex == index;
-        
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedIndex = index;
-                          });
-                          final newCatId = cat.id ?? 0;
-                          debugPrint("UI: Tapped category '${cat.name}', original cat.id: ${cat.id}, ID sent to provider: $newCatId");
-                          ref.read(selectedCategoryIdProvider.notifier).state = newCatId;
-                        },
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 55,
-                              height: 55,
-                              padding: const EdgeInsets.all(3),
+      body: Column(
+        children: [
+          /// 🔹 Categories Row
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: categoryAsync.when(
+              data: (categoryResponse) {
+                final categories = categoryResponse.categories ?? [];
+
+                if (categories.isEmpty) {
+                  return const Center(child: Text("No categories"));
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(categories.length, (index) {
+                    final cat = categories[index];
+                    final bool isSelected = _selectedIndex == index;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                        final newCatId = cat.id ?? 0;
+                        debugPrint("UI: Tapped category '${cat.name}', original cat.id: ${cat.id}, ID sent to provider: $newCatId");
+                        ref.read(selectedCategoryIdProvider.notifier).state = newCatId;
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 55,
+                            height: 55,
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isSelected ? const Color(0xFF3A2C27) : Colors.transparent,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isSelected ? const Color(0xFF3A2C27) : Colors.transparent,
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isSelected ? const Color(0xFF3A2C27) : const Color(0xFFF3F3F3),
-                                  border: Border.all(
-                                    color: isSelected ? Colors.white : Colors.transparent,
-                                    width: 2,
-                                  ),
+                                color: isSelected ? const Color(0xFF3A2C27) : const Color(0xFFF3F3F3),
+                                border: Border.all(
+                                  color: isSelected ? Colors.white : Colors.transparent,
+                                  width: 2,
                                 ),
-                                child: SvgPicture.network(
-                                  cat.icon.toString(),
-                                  colorFilter: isSelected
-                                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-                                      : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
-                                  height: 24,
-                                  width: 24,
-                                  fit: BoxFit.contain,
-                                  placeholderBuilder: (context) => const CircularProgressIndicator(),
-                                  errorBuilder: (context, error, stackTrace) => const Icon(
-                                    Icons.broken_image,
-                                    size: 24,
-                                    color: Colors.grey,
-                                  ),
+                              ),
+                              child: SvgPicture.network(
+                                cat.icon.toString(),
+                                colorFilter: isSelected
+                                    ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                                    : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                                height: 24,
+                                width: 24,
+                                fit: BoxFit.contain,
+                                placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                errorBuilder: (context, error, stackTrace) => const Icon(
+                                  Icons.broken_image,
+                                  size: 24,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              cat.name ?? "No Name",
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: isSelected ? Colors.black : Colors.black54,
-                              ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            cat.name ?? "No Name",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: isSelected ? Colors.black : Colors.black54,
                             ),
-                          ],
-                        ),
-                      );
-                    }),
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text("Error loading categories: $err")),
-              ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text("Error loading categories: $err")),
             ),
-        
-            const SizedBox(height: 16),
-        
-            /// 🔹 Products List
-            Expanded(
-              child: ref.watch(productProvider(selectedCategoryId)).when(
-                data: (response) {
-                  final products = response.products ?? [];
-                  final banners = response.banners ?? [];
-        
-                  if (products.isEmpty && banners.isEmpty) {
-                    return const Center(child: Text("No products"));
-                  }
-        
-                  // 🔥 Same logic as before
-                  final featureProducts = products.where((p) => p.isFeatured == true).toList();
-                  final recommendedProducts = products.where((p) => p.isRecommended == true).toList();
-                  final topCollectionProducts = products.where((p) => p.topCollection == true).toList();
-        
-                  final topBanner = banners.where((b) => b.position?.toLowerCase() == "top").toList();
-                  final middleBanner = banners.where((b) => b.position?.toLowerCase() == "middle").toList();
-                  final bottomBanner = banners.where((b) => b.position?.toLowerCase() == "bottom").toList();
-        
-                  return ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    children: [
-                      if (topBanner.isNotEmpty)
-                        BannerSlider(banner: topBanner.first),
-        
-                      if (featureProducts.isNotEmpty) ...[
-                        _buildSectionTitle("Feature Products", () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubCategoryProductsScreen(
-                                subCategoryName: "featured",
-                                isSubCategory: false,
-                              ),
+          ),
+
+          const SizedBox(height: 16),
+
+          /// 🔹 Products List
+          Expanded(
+            child: ref.watch(productProvider(selectedCategoryId)).when(
+              data: (response) {
+                final products = response.products ?? [];
+                final banners = response.banners ?? [];
+
+                if (products.isEmpty && banners.isEmpty) {
+                  return const Center(child: Text("No products"));
+                }
+
+                // 🔥 Same logic as before
+                final featureProducts = products.where((p) => p.isFeatured == true).toList();
+                final recommendedProducts = products.where((p) => p.isRecommended == true).toList();
+                final topCollectionProducts = products.where((p) => p.topCollection == true).toList();
+
+                final topBanner = banners.where((b) => b.position?.toLowerCase() == "top").toList();
+                final middleBanner = banners.where((b) => b.position?.toLowerCase() == "middle").toList();
+                final bottomBanner = banners.where((b) => b.position?.toLowerCase() == "bottom").toList();
+
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  children: [
+                    if (topBanner.isNotEmpty)
+                      BannerSlider(banner: topBanner.first),
+
+                    if (featureProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Feature Products", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubCategoryProductsScreen(
+                              subCategoryName: "featured",
+                              isSubCategory: false,
                             ),
-                          );
-                        }),
-                        _buildProductGrid(featureProducts),
-                      ],
-        
-                      const SizedBox(height: 20),
-                      if (middleBanner.isNotEmpty)
-                        _buildBanner(
-                          middleBanner.first,
-                          showIndicator: false,
-                          showTitle: false,
-                          showDescription: false,
-                        ),
-        
-                      if (recommendedProducts.isNotEmpty) ...[
-                        _buildSectionTitle("Recommended", () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubCategoryProductsScreen(
-                                subCategoryName: "recommended",
-                                isSubCategory: false,
-                              ),
+                          ),
+                        );
+                      }),
+                      _buildProductGrid(featureProducts),
+                    ],
+
+                    const SizedBox(height: 20),
+                    if (middleBanner.isNotEmpty)
+                      _buildBanner(
+                        middleBanner.first,
+                        showIndicator: false,
+                        showTitle: false,
+                        showDescription: false,
+                      ),
+
+                    if (recommendedProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Recommended", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubCategoryProductsScreen(
+                              subCategoryName: "recommended",
+                              isSubCategory: false,
                             ),
-                          );
-                        }),
-                        _buildProductList(recommendedProducts),
-                      ],
-        
-                      if (topCollectionProducts.isNotEmpty) ...[
-                        _buildSectionTitle("Top Collection", () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubCategoryProductsScreen(
-                                subCategoryName: "topCollection",
-                                isSubCategory: false,
-                              ),
+                          ),
+                        );
+                      }),
+                      _buildProductList(recommendedProducts),
+                    ],
+
+                    if (topCollectionProducts.isNotEmpty) ...[
+                      _buildSectionTitle("Top Collection", () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubCategoryProductsScreen(
+                              subCategoryName: "topCollection",
+                              isSubCategory: false,
                             ),
-                          );
-                        }),
-                        _buildProductGrid(topCollectionProducts),
-                      ],
-        
-                      const SizedBox(height: 20),
-        
-                      if (bottomBanner.isNotEmpty)
-                        SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: bottomBanner.length,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemBuilder: (context, index) {
-                              final banner = bottomBanner[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  debugPrint("SubCategory name: ${banner.title}");
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SubCategoryProductsScreen(
-                                        subCategoryName: banner.title.toString(),
-                                        isSubCategory: true,
+                          ),
+                        );
+                      }),
+                      _buildProductGrid(topCollectionProducts),
+                    ],
+
+                    const SizedBox(height: 20),
+
+                    if (bottomBanner.isNotEmpty)
+                      SizedBox(
+                        height: 150,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: bottomBanner.length,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemBuilder: (context, index) {
+                            final banner = bottomBanner[index];
+                            return GestureDetector(
+                              onTap: () {
+                                debugPrint("SubCategory name: ${banner.title}");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SubCategoryProductsScreen(
+                                      subCategoryName: banner.title.toString(),
+                                      isSubCategory: true,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                children: banner.bannerImg!.map((imgUrl) {
+                                  return Container(
+                                    width: 150,
+                                    height: 150,
+                                    margin: const EdgeInsets.only(right: 12),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Image.network(
+                                        imgUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => Image.network(
+                                          "https://via.placeholder.com/150x150",
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   );
-                                },
-                                child: Row(
-                                  children: banner.bannerImg!.map((imgUrl) {
-                                    return Container(
-                                      width: 150,
-                                      height: 150,
-                                      margin: const EdgeInsets.only(right: 12),
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Image.network(
-                                          imgUrl,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) => Image.network(
-                                            "https://via.placeholder.com/150x150",
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              );
-                            },
-                          ),
+                                }).toList(),
+                              ),
+                            );
+                          },
                         ),
-                    ],
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text("Error: $err")),
-              ),
+                      ),
+                  ],
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text("Error: $err")),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
