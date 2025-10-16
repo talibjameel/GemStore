@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../Providers/cart_provider.dart';
 
-class ProductDetailScreen extends StatefulWidget {
+
+class ProductDetailScreen extends ConsumerStatefulWidget {
+  final String productId;
   final String productName;
   final String productDescription;
   final String productPrice;
@@ -18,12 +22,13 @@ class ProductDetailScreen extends StatefulWidget {
     required this.size,
     required this.color,
     required this.rating,
+    required this.productId,
   });
 
   @override
-  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  ConsumerState<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   int _selectedColorIndex = 0;
   int _selectedSizeIndex = 0;
 
@@ -34,7 +39,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
 
-    // 🔹 String ko List me convert karna (comma separated)
     sizes = widget.size.isNotEmpty
         ? widget.size.split(',').map((e) => e.trim()).toList()
         : [];
@@ -42,14 +46,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     colors = widget.color.isNotEmpty
         ? widget.color.split(',').map((e) => e.trim()).toList()
         : [];
-
-    debugPrint("Products Sizes => $sizes");
-    debugPrint("Products Colors => $colors");
-    debugPrint("Products Rating => ${widget.rating}");
   }
 
   @override
   Widget build(BuildContext context) {
+    final cartNotifier = ref.read(cartProvider.notifier);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       body: Stack(
@@ -163,39 +165,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         children: [
                           // 🔹 Colors Dynamic
                           if (colors.isNotEmpty && colors != 'null') ...[
-                           Column(
-                             children: [
-                               const Text(
-                                   'Colors',
-                                   style: TextStyle(
-                                       fontSize: 12, fontWeight: FontWeight.w600)),
-                               const SizedBox(height: 10),
-                               Row(
-                                 children: List.generate(
-                                   colors.length,
-                                       (index) => _buildColorCircle(colors[index], index),
-                                 ),
-                               ),
-                             ],
-                           )
+                            Column(
+                              children: [
+                                const Text(
+                                    'Colors',
+                                    style: TextStyle(
+                                        fontSize: 12, fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: List.generate(
+                                    colors.length,
+                                        (index) => _buildColorCircle(colors[index], index),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
 
                           // 🔹 Sizes Dynamic
                           if (sizes.isNotEmpty && sizes != 'null') ...[
-                           Column(
-                             children: [
-                               const Text('Sizes',
-                                   style: TextStyle(
-                                       fontSize: 12, fontWeight: FontWeight.w600)),
-                               const SizedBox(height: 10),
-                               Row(
-                                 children: List.generate(
-                                   sizes.length,
-                                       (index) => _buildSizeButton(sizes[index], index),
-                                 ),
-                               ),
-                             ],
-                           )
+                            Column(
+                              children: [
+                                const Text('Sizes',
+                                    style: TextStyle(
+                                        fontSize: 12, fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: List.generate(
+                                    sizes.length,
+                                        (index) => _buildSizeButton(sizes[index], index),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ],
                       ),
@@ -210,12 +212,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           ),
 
-          // 🔹 Add to cart
+          /// ✅ Add to cart button
           Align(
             alignment: Alignment.bottomCenter,
             child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/AddToCartScreen');
+              onTap: () async {
+                final selectedSize = sizes.isNotEmpty ? sizes[_selectedSizeIndex] : 'M';
+                final selectedColor = colors.isNotEmpty ? colors[_selectedColorIndex] : 'White';
+
+                // 🔹 Add to Cart API call
+                await cartNotifier.addItemToCart(
+                  productId: widget.productId,
+                  quantity: 1,
+                  price: widget.productPrice,
+                  size: selectedSize,
+                  color: selectedColor,
+                );
+
+                // 🔹 Navigate only after successful add
+                if (mounted) {
+                  Navigator.pushNamed(context, '/AddToCartScreen');
+                }
               },
               child: Container(
                 height: 60,
@@ -230,15 +247,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.shopping_bag_outlined,
-                          color: Colors.white, size: 24),
+                      Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 24),
                       SizedBox(width: 10),
-                      Text('Add To Cart',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          )),
+                      Text(
+                        'Add To Cart',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                 ),

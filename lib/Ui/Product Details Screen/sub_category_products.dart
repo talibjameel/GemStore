@@ -84,6 +84,7 @@ class _SubCategoryProductsScreenState extends State<SubCategoryProductsScreen> {
               size: product.size.toString(),
               color: product.colors.toString(),
               rating: product.rating.toString(),
+              productId: product.id.toString(),
             ),
           ),
         );

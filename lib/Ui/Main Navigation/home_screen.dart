@@ -345,6 +345,7 @@ class _HomeState extends ConsumerState<Home> {
                   size: product.size.toString(),
                   color: product.colors.toString(),
                   rating: product.rating.toString(),
+                  productId: product.id.toString(),
                 ),
               ),
             );
@@ -421,6 +422,7 @@ class _HomeState extends ConsumerState<Home> {
                     size: product.size.toString(),
                     color: product.colors.toString(),
                     rating: product.rating.toString(),
+                      productId: product.id.toString(),
                   ),
                 ),
               );
