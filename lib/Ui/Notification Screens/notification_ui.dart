@@ -1,6 +1,9 @@
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../Helper Funcation/custom_appBar.dart';
+import '../../Widget/custom_appbar.dart';
+
 class NotificationUi extends StatefulWidget {
   const NotificationUi({super.key});
 
@@ -33,31 +36,9 @@ class _NotificationUiState extends State<NotificationUi> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Material(
-            color: Colors.white,
-            elevation: 3,
-            shape: const CircleBorder(),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back_ios,
-                    color: Colors.black, size: 16),
-                padding: const EdgeInsets.all(8),
-                constraints: const BoxConstraints(),
-              ),
-            ),
-          ),
-        ),
-        title: const TextWidget(text: "Notification Screens"),
-        centerTitle: true,
+      appBar: const CustomAppBar(
+          showBackButton: true,
+          title: "Notification Screens"
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -2,6 +2,8 @@ import 'package:ecommerce_store/Helper%20Funcation/custom_appBar.dart';
 import 'package:ecommerce_store/Ui/Main%20Navigation/home_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../../Widget/custom_appbar.dart';
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -17,7 +19,10 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: 'Discover'),
+      appBar: CustomAppBar(
+        showBackButton: false,
+          title: 'Discover'
+      ),
       drawer: const CustomNavigationDrawer(),
       endDrawer: const FilterDrawer(),
       body: Padding(

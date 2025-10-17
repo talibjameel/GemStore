@@ -17,6 +17,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   flutter_riverpod: ^2.5.1
   carousel_slider: ^5.1.1
+  flutter_stripe: ^12.0.2
 
 dev_dependencies:
   flutter_test:
@@ -32,13 +33,9 @@ flutter:
      - res/images/Walkthrough_images/model1.png
      - res/images/Walkthrough_images/model2.png
      - res/images/Walkthrough_images/model3.png
-     - res/Auth Button/Frame 12.svg
-     - res/Auth Button/Frame 13.svg
-     - res/Auth Button/Frame 14.svg
-     - res/TopButton/Woman.svg
-     - res/TopButton/Men.svg
-     - res/TopButton/Accessories.svg
-     - res/TopButton/Beauty.svg
+     - res/Auth_Button/apple.svg
+     - res/Auth_Button/google.svg
+     - res/Auth_Button/facebook.svg
 flutter_launcher_icons:
   android: true
   ios: true

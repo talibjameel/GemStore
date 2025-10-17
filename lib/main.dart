@@ -1,12 +1,14 @@
 import 'package:ecommerce_store/Ui/Main%20Navigation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'Ui/Auth Screens/forgot_password.dart';
 import 'Ui/Auth Screens/login_screen.dart';
 import 'Ui/Auth Screens/middle_ware.dart';
 import 'Ui/Auth Screens/opt_verification.dart';
 import 'Ui/Auth Screens/sign_up.dart';
 import 'Ui/Auth Screens/update_password.dart';
+import 'Ui/Checkout/checkout_shipping_screen.dart';
 import 'Ui/Main Navigation/my_order_screen.dart';
 import 'Ui/Main Navigation/search_screen.dart';
 import 'Ui/Notification Screens/notification_ui.dart';
@@ -15,8 +17,10 @@ import 'Ui/Walkthrough Screens/walkthrough_screen_2.dart';
 import 'Ui/Main Navigation/home_screen.dart';
 import 'Ui/add_to_cart_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51SJ5WIReL62G4t18gyciML5CRHoX9YtDMBHYhLmuZIu3KFWVIj3MlbfqGpv0KMo0RTmNmonWs3wojKI76vCI38a700bPI3LX1n';
+  await Stripe.instance.applySettings();
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -42,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/MyOrderScreen': (context) => const MyOrderScreen(),
         '/ProfileScreen': (context) => const ProfileScreen(),
         '/AddToCartScreen': (context) => const AddToCartScreen(),
+        '/CheckoutShipping': (context) => const CheckoutShippingScreen(),
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

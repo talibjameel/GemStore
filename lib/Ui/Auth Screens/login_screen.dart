@@ -117,9 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 10,
                     children: [
-                      SvgPicture.asset('res/Auth Screens Button/Frame 12.svg'),
-                      SvgPicture.asset('res/Auth Screens Button/Frame 13.svg'),
-                      SvgPicture.asset('res/Auth Screens Button/Frame 14.svg'),
+                      SvgPicture.asset('res/Auth_Button/google.svg'),
+                      SvgPicture.asset('res/Auth_Button/apple.svg'),
+                      SvgPicture.asset('res/Auth_Button/facebook.svg'),
                     ],
                   ),
                   SizedBox(height: 150,),
