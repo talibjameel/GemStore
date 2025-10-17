@@ -1,5 +1,6 @@
 import 'package:ecommerce_store/Ui/Main%20Navigation/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'Ui/Auth Screens/forgot_password.dart';
@@ -19,8 +20,9 @@ import 'Ui/add_to_cart_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = 'pk_test_51SJ5WIReL62G4t18gyciML5CRHoX9YtDMBHYhLmuZIu3KFWVIj3MlbfqGpv0KMo0RTmNmonWs3wojKI76vCI38a700bPI3LX1n';
   await Stripe.instance.applySettings();
+  await dotenv.load(fileName: ".env");
+  Stripe.publishableKey = dotenv.env['STRIPE_PUBLIC']!;
   runApp(ProviderScope(child: MyApp()));
 }
 
