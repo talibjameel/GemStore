@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../Models/product_model.dart';
 import '../../Providers/category_provider.dart';
-import '../Product Details Screen/products_details_screen.dart';
-import '../Product Details Screen/sub_category_products.dart';
+import '../Product Screens/products_details_screen.dart';
+import '../Product Screens/sub_category_products.dart';
 
 
 class Home extends ConsumerStatefulWidget {

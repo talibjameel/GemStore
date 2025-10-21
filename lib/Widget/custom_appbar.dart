@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Helper Funcation/custom_text_widget.dart';
+import 'custom_text_widget.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -19,6 +19,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       backgroundColor: Colors.white,
       elevation: 0,
       leading: showBackButton

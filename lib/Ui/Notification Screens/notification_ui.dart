@@ -1,4 +1,4 @@
-import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
+import 'package:ecommerce_store/Widget/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import '../../Widget/custom_appbar.dart';
 

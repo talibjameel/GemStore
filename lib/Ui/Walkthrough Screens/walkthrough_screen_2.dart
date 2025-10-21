@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../Helper Funcation/cutom_button.dart';
+import '../../Widget/cutom_button.dart';
 
 class WalkthroughScreen2 extends StatefulWidget {
   const WalkthroughScreen2({super.key});

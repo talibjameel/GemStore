@@ -13,16 +13,18 @@ import 'Ui/Checkout/checkout_shipping_screen.dart';
 import 'Ui/Main Navigation/my_order_screen.dart';
 import 'Ui/Main Navigation/search_screen.dart';
 import 'Ui/Notification Screens/notification_ui.dart';
+import 'Ui/Product Screens/cart_screen.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_1.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_2.dart';
 import 'Ui/Main Navigation/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Stripe.instance.applySettings();
+
   await dotenv.load(fileName: ".env");
   Stripe.publishableKey = dotenv.env['STRIPE_PUBLIC']!;
-  runApp(ProviderScope(child: MyApp()));
+  await Stripe.instance.applySettings();
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/SearchScreen': (context) => const SearchScreen(),
         '/MyOrderScreen': (context) => const MyOrderScreen(),
         '/ProfileScreen': (context) => const ProfileScreen(),
-        // '/AddToCartScreen': (context) => const AddToCartScreen(),
+        '/CartScreen': (context) => const CartScreen(),
         '/CheckoutShipping': (context) => const CheckoutShippingScreen(),
       },
       title: 'Flutter Demo',

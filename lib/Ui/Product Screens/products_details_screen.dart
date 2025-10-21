@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../Providers/cart_provider.dart';
+import '../../Providers/cart_api_and_provider.dart';
 
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -231,7 +231,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
                 // 🔹 Navigate only after successful add
                 if (mounted) {
-                  Navigator.pushNamed(context, '/AddToCartScreen');
+                  Navigator.pushNamed(context, '/CartScreen');
                 }
               },
               child: Container(

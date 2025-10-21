@@ -1,7 +1,7 @@
-import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
+import 'package:ecommerce_store/Widget/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../Helper Funcation/cutom_button.dart';
+import '../../Widget/cutom_button.dart';
 import '../../APIs/Auth Api/auth_api_services.dart';
 
 class SignUpScreen extends StatefulWidget {

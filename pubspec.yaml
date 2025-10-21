@@ -37,6 +37,7 @@ flutter:
      - res/Auth_Button/apple.svg
      - res/Auth_Button/google.svg
      - res/Auth_Button/facebook.svg
+     - .env
 flutter_launcher_icons:
   android: true
   ios: true
