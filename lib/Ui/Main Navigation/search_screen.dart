@@ -1,7 +1,5 @@
-import 'package:ecommerce_store/Helper%20Funcation/custom_appBar.dart';
 import 'package:ecommerce_store/Ui/Main%20Navigation/home_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../Widget/custom_appbar.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -250,7 +248,7 @@ class FilterDrawer extends StatelessWidget {
       decoration:
       BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
         BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2))
       ]),

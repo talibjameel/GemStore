@@ -164,7 +164,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // 🔹 Colors Dynamic
-                          if (colors.isNotEmpty && colors != 'null') ...[
+                          if (colors.isNotEmpty) ...[
                             Column(
                               children: [
                                 const Text(
@@ -183,7 +183,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                           ],
 
                           // 🔹 Sizes Dynamic
-                          if (sizes.isNotEmpty && sizes != 'null') ...[
+                          if (sizes.isNotEmpty) ...[
                             Column(
                               children: [
                                 const Text('Sizes',

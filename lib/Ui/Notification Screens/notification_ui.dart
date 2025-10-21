@@ -1,7 +1,5 @@
 import 'package:ecommerce_store/Helper%20Funcation/custom_text_widget.dart';
 import 'package:flutter/material.dart';
-
-import '../../Helper Funcation/custom_appBar.dart';
 import '../../Widget/custom_appbar.dart';
 
 class NotificationUi extends StatefulWidget {

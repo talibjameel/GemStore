@@ -16,7 +16,6 @@ import 'Ui/Notification Screens/notification_ui.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_1.dart';
 import 'Ui/Walkthrough Screens/walkthrough_screen_2.dart';
 import 'Ui/Main Navigation/home_screen.dart';
-import 'Ui/add_to_cart_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
         '/SearchScreen': (context) => const SearchScreen(),
         '/MyOrderScreen': (context) => const MyOrderScreen(),
         '/ProfileScreen': (context) => const ProfileScreen(),
-        '/AddToCartScreen': (context) => const AddToCartScreen(),
+        // '/AddToCartScreen': (context) => const AddToCartScreen(),
         '/CheckoutShipping': (context) => const CheckoutShippingScreen(),
       },
       title: 'Flutter Demo',
