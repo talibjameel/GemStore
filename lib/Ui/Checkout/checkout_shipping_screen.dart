@@ -108,7 +108,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckoutPaymentScreen()));
                   }
                 },
-                child: const Text("Continue to payment", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                child: const Text("Continue to payment", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: Colors.white)),
               ),
             ),
             const SizedBox(height: 30),

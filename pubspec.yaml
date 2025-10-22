@@ -30,6 +30,7 @@ flutter:
   uses-material-design: true
 
   assets:
+     - .env
      - res/images/Splash.png
      - res/images/Walkthrough_images/model1.png
      - res/images/Walkthrough_images/model2.png
@@ -37,7 +38,9 @@ flutter:
      - res/Auth_Button/apple.svg
      - res/Auth_Button/google.svg
      - res/Auth_Button/facebook.svg
-     - .env
+     - res/images/payments.svg
+     - res/images/Card.svg
+
 flutter_launcher_icons:
   android: true
   ios: true
