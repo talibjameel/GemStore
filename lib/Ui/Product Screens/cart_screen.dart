@@ -5,19 +5,29 @@ import '../../Providers/cart_api_and_provider.dart';
 import '../../Widget/custom_appbar.dart';
 
 
-class CartScreen extends ConsumerWidget {
+class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cartState = ref.watch(cartProvider);
+  ConsumerState<CartScreen> createState() => _CartScreenState();
+}
+class _CartScreenState extends ConsumerState<CartScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(cartProvider.notifier).fetchCart();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cartNotifier = ref.read(cartProvider.notifier);
+    final cartState = ref.watch(cartProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: "Cart",
-      ),
+      appBar: CustomAppBar(title: "Cart"),
       body: cartState.when(
         data: (cartItems) => Column(
           children: [
@@ -32,7 +42,6 @@ class CartScreen extends ConsumerWidget {
                 },
               ),
             ),
-
             // Bottom Price Section
             Container(
               width: double.infinity,
@@ -40,7 +49,7 @@ class CartScreen extends ConsumerWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.1),
+                    color: Colors.grey.withAlpha(25),
                     blurRadius: 10,
                     offset: const Offset(0, -3),
                   ),
@@ -50,12 +59,15 @@ class CartScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 children: [
-                  _buildPriceRow("Product price", "\$${cartNotifier.totalPrice.toStringAsFixed(2)}"),
+                  _buildPriceRow("Product price",
+                      "\$${cartNotifier.totalPrice.toStringAsFixed(2)}"),
                   const SizedBox(height: 8),
                   const Divider(height: 25, color: Colors.grey),
                   _buildPriceRow("Shipping", "Freeship", isSecondary: true),
                   const Divider(height: 25, color: Colors.grey),
-                  _buildPriceRow("Subtotal", "\$${cartNotifier.totalPrice.toStringAsFixed(2)}", bold: true),
+                  _buildPriceRow("Subtotal",
+                      "\$${cartNotifier.totalPrice.toStringAsFixed(2)}",
+                      bold: true),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
@@ -97,7 +109,7 @@ class CartScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withAlpha(13),
             blurRadius: 8,
             offset: const Offset(0, 7),
           ),
@@ -126,31 +138,21 @@ class CartScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text(item.title,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.black)),
                   const SizedBox(height: 5),
-                  Text(
-                    "\$${item.price}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text("\$${item.price}",
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700)),
                   const SizedBox(height: 5),
-                  Text(
-                    "Size: ${item.size}  |  Color: ${item.color}",
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                  Text("Size: ${item.size}  |  Color: ${item.color}",
+                      style: TextStyle(
+                          fontSize: 9, color: Colors.grey.shade600)),
                 ],
               ),
             ),
@@ -163,13 +165,13 @@ class CartScreen extends ConsumerWidget {
               children: [
                 SizedBox(
                   width: 26,
-                  child:IconButton(
-                    onPressed: () => cartNotifier.removeItemFromCart(item.cartId.toString()),
-                    icon: Icon (Icons.delete_forever_rounded, color: Colors.black, size: 28),
-                ),
+                  child: IconButton(
+                      onPressed: () => cartNotifier
+                          .removeItemFromCart(item.cartId.toString()),
+                      icon: const Icon(Icons.delete_forever_rounded,
+                          color: Colors.black, size: 28)),
                 ),
                 const SizedBox(height: 4),
-
                 Container(
                   height: 30,
                   width: 90,
@@ -187,13 +189,9 @@ class CartScreen extends ConsumerWidget {
                           child: Icon(Icons.remove, size: 16, color: Colors.black),
                         ),
                       ),
-                      Text(
-                        "${item.quantity}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
+                      Text("${item.quantity}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 14)),
                       InkWell(
                         onTap: () => cartNotifier.increaseQuantity(index),
                         child: const Padding(
@@ -206,8 +204,7 @@ class CartScreen extends ConsumerWidget {
                 ),
               ],
             ),
-          )
-
+          ),
         ],
       ),
     );
@@ -218,22 +215,16 @@ class CartScreen extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: isSecondary ? Colors.grey : Colors.black,
-            fontSize: 15,
-            fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: isSecondary ? Colors.grey : Colors.black,
-            fontSize: 15,
-            fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
+        Text(title,
+            style: TextStyle(
+                color: isSecondary ? Colors.grey : Colors.black,
+                fontSize: 15,
+                fontWeight: bold ? FontWeight.w600 : FontWeight.w400)),
+        Text(value,
+            style: TextStyle(
+                color: isSecondary ? Colors.grey : Colors.black,
+                fontSize: 15,
+                fontWeight: bold ? FontWeight.w600 : FontWeight.w400)),
       ],
     );
   }

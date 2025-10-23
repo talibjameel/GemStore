@@ -1,6 +1,7 @@
 import 'package:ecommerce_store/Widget/custom_appbar.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../Providers/payment_value_provider.dart';
 import '../../Widget/step_indicator.dart';
 import 'checkout_payment_screen.dart';
 
@@ -11,7 +12,6 @@ class CheckoutShippingScreen extends StatefulWidget {
   @override
   State<CheckoutShippingScreen> createState() => _CheckoutShippingScreenState();
 }
-
 class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
   final _formKey = GlobalKey<FormState>();
   String? selectedShipping = "free";
@@ -33,6 +33,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
             const Text("STEP 1", style: TextStyle(color: Colors.grey, fontSize: 12)),
             const Text("Shipping", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
+
             Form(
               key: _formKey,
               child: Column(
@@ -48,12 +49,21 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
                 ],
               ),
             ),
+
             const SizedBox(height: 25),
             const Text("Shipping method", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
-            _buildShippingOption("Free", "Delivery from 3 to 7 business days", "free"),
-            _buildShippingOption("\$9.90", "Delivery from 4 to 6 business days", "standard"),
-            _buildShippingOption("\$9.90", "Delivery from 2 to 3 business days", "fast"),
+
+            Consumer(
+              builder: (context, ref, _) => Column(
+                children: [
+                  _buildShippingOption(context, ref, "Free", "Delivery from 3 to 7 business days", "free"),
+                  _buildShippingOption(context, ref, "\$14.99", "Delivery from 4 to 6 business days", "standard"),
+                ],
+              ),
+            ),
+
+
             const SizedBox(height: 25),
             const Text("Coupon Code", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
@@ -82,6 +92,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
                 ],
               ),
             ),
+
             const SizedBox(height: 25),
             const Text("Billing Address", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             Row(
@@ -94,6 +105,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
                 const Text("Copy address data from shipping"),
               ],
             ),
+
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
@@ -105,10 +117,13 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckoutPaymentScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutPaymentScreen()));
                   }
                 },
-                child: const Text("Continue to payment", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: Colors.white)),
+                child: const Text(
+                  "Continue to payment",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -134,10 +149,18 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
     );
   }
 
-  Widget _buildShippingOption(String title, String subtitle, String value) {
+  Widget _buildShippingOption(
+      BuildContext context,
+      WidgetRef ref,
+      String title,
+      String subtitle,
+      String value,
+      ) {
+    final selectedShipping = ref.watch(shippingProvider);
     final isSelected = selectedShipping == value;
+
     return GestureDetector(
-      onTap: () => setState(() => selectedShipping = value),
+      onTap: () => ref.read(shippingProvider.notifier).state = value, // ✅ Riverpod update
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
@@ -152,7 +175,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
               value: value,
               groupValue: selectedShipping,
               activeColor: Colors.black,
-              onChanged: (val) => setState(() => selectedShipping = val),
+              onChanged: (val) => ref.read(shippingProvider.notifier).state = val!, // ✅ Riverpod update
             ),
             Expanded(
               child: Column(
