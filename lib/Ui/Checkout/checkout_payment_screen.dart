@@ -3,9 +3,9 @@ import 'package:ecommerce_store/Widget/custom_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../APIs/payment_api/stripe_api.dart';
 import '../../Providers/payment_value_provider.dart';
 import '../../Widget/step_indicator.dart';
-import 'checkout_success_screen.dart';
 import '../../Providers/cart_api_and_provider.dart';
 
 class CheckoutPaymentScreen extends ConsumerStatefulWidget {
@@ -29,7 +29,7 @@ class _CheckoutPaymentScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(title: "Check out"),
+      appBar: CustomAppBar(title: "Check out"),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,13 +237,14 @@ class CheckOutPayment extends ConsumerStatefulWidget {
 }
 
 class _CheckOutPaymentState extends ConsumerState<CheckOutPayment> {
+  final stripeApi = StripePaymentApi();
   bool checkBox = false;
 
   @override
   Widget build(BuildContext context) {
     final cartState = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
-    final selectedShipping = ref.watch(shippingProvider); // ✅ correct usage
+    final selectedShipping = ref.watch(shippingProvider);
 
     // 🧮 Calculate Delivery Charges
     double deliveryCharge =
@@ -378,11 +379,7 @@ class _CheckOutPaymentState extends ConsumerState<CheckOutPayment> {
                 ),
                 onPressed: () {
                   if(checkBox == true){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const CheckoutSuccessScreen()),
-                    );
+                    stripeApi.makeTestPayment(context, amountInCents: totalAmount.toInt() * 100);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

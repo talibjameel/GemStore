@@ -160,7 +160,7 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
     final isSelected = selectedShipping == value;
 
     return GestureDetector(
-      onTap: () => ref.read(shippingProvider.notifier).state = value, // ✅ Riverpod update
+      onTap: () => ref.read(shippingProvider.notifier).state = value,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
