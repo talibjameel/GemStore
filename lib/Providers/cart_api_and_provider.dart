@@ -148,6 +148,53 @@ class CartNotifier extends StateNotifier<AsyncValue<List<CartModel>>> {
     }
   }
 
+  /// ✅ Update item quantity
+  Future<void> updateItemQuantity(
+      String cartId,
+      int quantity,
+      )
+  async {
+    try {
+      String? token = await ApiConfig.getToken();
+      if (token == null) {
+        throw Exception("Token not found");
+      }
+
+      final url = Uri.parse(ApiConfig.updateCartItem);
+
+      final body = jsonEncode({
+        "cart_id": cartId,
+        "quantity": quantity,
+      });
+
+      final headers = {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      };
+
+      final request = http.Request("PUT", url)
+        ..headers.addAll(headers)
+        ..body = body;
+
+      debugPrint("➡️ Update Cart Request: $body");
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      final jsonData = jsonDecode(responseBody);
+
+      debugPrint("⬅️ Update Response: $jsonData");
+
+      if (response.statusCode == 200 && jsonData['success'] == true) {
+        // ✅ Refresh cart to get updated totals and quantity
+        await fetchCart();
+      } else {
+        throw Exception(jsonData['message'] ?? "Failed to update item");
+      }
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   /// Increase item quantity locally
   void increaseQuantity(int index) {
     state.whenData((list) {

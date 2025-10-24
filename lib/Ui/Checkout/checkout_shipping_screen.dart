@@ -13,6 +13,17 @@ class CheckoutShippingScreen extends StatefulWidget {
   State<CheckoutShippingScreen> createState() => _CheckoutShippingScreenState();
 }
 class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
+
+  // text controllers
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final countryController = TextEditingController();
+  final streetController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final zipController = TextEditingController();
+  final phoneController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
   String? selectedShipping = "free";
   bool copyAddress = false;
@@ -38,14 +49,14 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  _buildTextField("First name *", true),
-                  _buildTextField("Last name *", true),
-                  _buildTextField("Country *", true),
-                  _buildTextField("Street name *", true),
-                  _buildTextField("City *", true),
-                  _buildTextField("State / Province", false),
-                  _buildTextField("Zip-code *", true),
-                  _buildTextField("Phone number *", true),
+                  _buildTextField("First name *", true,controller: firstNameController),
+                  _buildTextField("Last name *", true,controller: lastNameController),
+                  _buildTextField("Country *", true,controller: countryController),
+                  _buildTextField("Street name *", true,controller: streetController),
+                  _buildTextField("City *", true,controller: cityController),
+                  _buildTextField("State / Province", false,controller: stateController),
+                  _buildTextField("Zip-code *", true,controller: zipController),
+                  _buildTextField("Phone number *", true,controller: phoneController),
                 ],
               ),
             ),
@@ -107,22 +118,33 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
             ),
 
             const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutPaymentScreen()));
-                  }
-                },
-                child: const Text(
-                  "Continue to payment",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+            Consumer(
+              builder: (context, ref, _) => SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      final addressString = """
+                      ${streetController.text}, ${cityController.text},${stateController.text}, ${countryController.text}""";
+
+                      // ✅ Correct use of ref here
+                      ref.read(addressProvider.notifier).state = addressString.trim();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => CheckoutPaymentScreen()),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    "Continue to payment",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+                  ),
                 ),
               ),
             ),
@@ -133,10 +155,11 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
     );
   }
 
-  Widget _buildTextField(String label, bool required) {
+  Widget _buildTextField(String label, bool required,{required TextEditingController controller}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -155,7 +178,8 @@ class _CheckoutShippingScreenState extends State<CheckoutShippingScreen> {
       String title,
       String subtitle,
       String value,
-      ) {
+      )
+  {
     final selectedShipping = ref.watch(shippingProvider);
     final isSelected = selectedShipping == value;
 

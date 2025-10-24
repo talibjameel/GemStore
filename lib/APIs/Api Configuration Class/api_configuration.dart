@@ -25,5 +25,10 @@ class ApiConfig {
   static const String viewCart = "$baseUrl/cart";
   static const String addItemToCart = "$baseUrl/cart/addItem";
   static const String deleteCartItem = "$baseUrl/cart/deleteItem";
+  static const String updateCartItem = "$baseUrl/cart/updateItem";
+  static const String placeOrder = "$baseUrl/place_order";
+  static const String myOrders = "$baseUrl/my_orders";
+
+
 
 }

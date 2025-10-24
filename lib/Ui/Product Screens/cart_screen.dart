@@ -183,7 +183,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
-                        onTap: () => cartNotifier.decreaseQuantity(index),
+                        onTap: () => onMinusPressed(index, ref),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8),
                           child: Icon(Icons.remove, size: 16, color: Colors.black),
@@ -193,7 +193,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 14)),
                       InkWell(
-                        onTap: () => cartNotifier.increaseQuantity(index),
+                        onTap: () => onPlusPressed(index, ref),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8),
                           child: Icon(Icons.add, size: 16, color: Colors.black),
@@ -228,4 +228,35 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       ],
     );
   }
+
+  onPlusPressed(int index, WidgetRef ref) {
+    ref.read(cartProvider.notifier).increaseQuantity(index);
+
+    final cartData = ref.read(cartProvider);
+    cartData.whenData((list) {
+      final item = list[index];
+
+      ref.read(cartProvider.notifier).updateItemQuantity(
+        item.cartId.toString(),
+        item.quantity
+      );
+    });
+  }
+
+  onMinusPressed(int index, WidgetRef ref) {
+    final notifier = ref.read(cartProvider.notifier);
+
+    notifier.decreaseQuantity(index);
+
+    final cartData = ref.read(cartProvider);
+    cartData.whenData((list) {
+      final item = list[index];
+
+      notifier.updateItemQuantity(
+        item.cartId.toString(),
+        item.quantity,
+      );
+    });
+  }
+
 }

@@ -19,7 +19,10 @@ class _CheckoutSuccessScreenState extends State<CheckoutSuccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: "Checkout Success"),
+      appBar: CustomAppBar(
+        title: "Checkout Success",
+        showBackButton: false,
+      ),
       body: AnimatedContainer(
         duration: Duration(milliseconds: 500),
         padding: EdgeInsets.all(20),
@@ -69,6 +72,21 @@ class _CheckoutSuccessScreenState extends State<CheckoutSuccessScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text("Continue Shopping",style: TextStyle(color: Colors.white),),
+
+                )
               ],
             ),
 
