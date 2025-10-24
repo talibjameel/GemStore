@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import '../../Ui/Checkout/checkout_success_screen.dart';
 
 class StripePaymentApi {
-  // ⚠️ Apna Stripe Secret Key yahan lagao
   final String stripeSecretKey = dotenv.env['STRIPE_SECRET']!;
 
   /// 🔁 Create PaymentIntent on Stripe
