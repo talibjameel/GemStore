@@ -31,3 +31,18 @@ FutureProvider.family<ProductBannerResponse, int>((ref, categoryId) async {
 
 /// ✅ Selected Category ID StateProvider
 final selectedCategoryIdProvider = StateProvider<int>((ref) => 1);
+
+
+/// ✅ refresh categories
+final categoryRefreshProvider = Provider((ref) {
+  return () {
+    ref.invalidate(categoryProvider);
+  };
+});
+
+/// ✅ refresh products
+final productRefreshProvider = Provider((ref) {
+  return () {
+    ref.invalidate(productProvider);
+  };
+});

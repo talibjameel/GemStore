@@ -245,7 +245,6 @@ class _CheckOutPaymentState extends ConsumerState<CheckOutPayment> {
     final cartState = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
     final selectedShipping = ref.watch(shippingProvider);
-    final addresState = ref.watch(addressProvider);
 
 
     // 🧮 Calculate Delivery Charges
