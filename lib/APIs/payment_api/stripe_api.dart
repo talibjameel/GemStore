@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
-import '../../Ui/Checkout/checkout_success_screen.dart';
 
 class StripePaymentApi {
   final String stripeSecretKey = dotenv.env['STRIPE_SECRET']!;
@@ -65,11 +64,12 @@ class StripePaymentApi {
       // 3️⃣ Show PaymentSheet
       await Stripe.instance.presentPaymentSheet();
 
-      Navigator.push(
+      Navigator.pushNamedAndRemoveUntil(
         context,
-        MaterialPageRoute(
-            builder: (_) => const CheckoutSuccessScreen()),
+        "/CheckoutSuccessfully",
+            (route) => false,
       );
+
     } catch (e) {
       debugPrint('❌ Stripe Payment Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(

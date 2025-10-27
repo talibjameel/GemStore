@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-import '../../Widget/custom_appbar.dart';
 import '../../Widget/step_indicator.dart';
 
 class CheckoutSuccessScreen extends StatefulWidget {
@@ -10,7 +9,6 @@ class CheckoutSuccessScreen extends StatefulWidget {
   @override
   State<CheckoutSuccessScreen> createState() => _CheckoutSuccessScreenState();
 }
-
 class _CheckoutSuccessScreenState extends State<CheckoutSuccessScreen> {
 
   bool showSuccessAnimation = true;
@@ -19,9 +17,16 @@ class _CheckoutSuccessScreenState extends State<CheckoutSuccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: "Checkout Success",
-        showBackButton: false,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+          title: Text(
+            "Checkout Success",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 20
+            ),
+          ),
       ),
       body: AnimatedContainer(
         duration: Duration(milliseconds: 500),
@@ -75,7 +80,7 @@ class _CheckoutSuccessScreenState extends State<CheckoutSuccessScreen> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/HomePage');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,

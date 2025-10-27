@@ -10,6 +10,7 @@ import 'Ui/Auth Screens/opt_verification.dart';
 import 'Ui/Auth Screens/sign_up.dart';
 import 'Ui/Auth Screens/update_password.dart';
 import 'Ui/Checkout/checkout_shipping_screen.dart';
+import 'Ui/Checkout/checkout_success_screen.dart';
 import 'Ui/Main Navigation/my_order_screen.dart';
 import 'Ui/Main Navigation/search_screen.dart';
 import 'Ui/Notification Screens/notification_ui.dart';
@@ -50,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/ProfileScreen': (context) => const ProfileScreen(),
         '/CartScreen': (context) => const CartScreen(),
         '/CheckoutShipping': (context) => const CheckoutShippingScreen(),
+        '/CheckoutPayment': (context) => const CheckoutShippingScreen(),
+        '/CheckoutSuccessfully': (context) => const CheckoutSuccessScreen(),
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
